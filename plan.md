@@ -9,7 +9,7 @@
 - Compare the size of the vocabulary to larger datasets, such as speech-to-text datasets.
 
 #### 2. Audio Quality Enhancement
-![audio quality enhancement](https://github.com/siinlab/darija-tts/blob/develop/images/audio_cleaning.png)
+![audio quality enhancement](docs/_static/img/audio_cleaning.png)
 - Utilize the Auphonic API to enhance the audio quality of the dataset.
 - Use Librosa to split audios or extract features for the dataset EDA. 
 
@@ -19,7 +19,7 @@
 - Consider making a custom model suitable for darija if Shakkelha didn't work well.
 
 #### 4. Customized Buckwalter Transliteration
-![audio quality enhancement](https://github.com/siinlab/darija-tts/blob/develop/images/buckwalter.png)
+![audio quality enhancement](docs/_static/img/buckwalter.png)
 - Add the diacritization to the dataset for better phonetic representation (using buckwalter).
 - Add new alphabets to the Buckwalter transliteration for better orthographic and phonetic representation of Arabic Darija.
   - Include the letter ڴ

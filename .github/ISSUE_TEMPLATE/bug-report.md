@@ -1,3 +1,9 @@
+---
+name: Bug Report
+about: Create a report to help us improve the project.
+labels: bug
+---
+
 <!--
     Thank you for submitting an issue! Please provide as much detail as possible.
     If your issue is related to a bug, please provide the following details.

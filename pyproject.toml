@@ -1,14 +1,15 @@
 [tool.ruff]
 builtins = ["_"]
 line-length = 88
-target-version = "py38"
+target-version = "py310"
 exclude = ["venv"]
-
 
 [tool.ruff.lint]
 select = ["ALL"]
 ignore = [
     "INP001",
+    "W191",
+    "D206",
 ]
 
 [tool.ruff.format]

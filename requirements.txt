@@ -1,2 +1,4 @@
 joblib
 lgg
+pandas
+matplotlib

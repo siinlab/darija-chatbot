@@ -1,0 +1,5 @@
+outs:
+- md5: 8b2c3d22ece312df02e835514b1db2a8
+  size: 131
+  hash: md5
+  path: captions.csv

@@ -27,4 +27,4 @@ jobs:
       run:  ./tools/linter/run_ruff.sh
 
     - name: Run Shell Linter
-      run:  ./tools/linter/run_shell_linter.sh
+      run:  ./tools/linter/run_shellcheck.sh

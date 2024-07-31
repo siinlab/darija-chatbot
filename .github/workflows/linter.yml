@@ -20,8 +20,11 @@ jobs:
       with:
         python-version: '3.x'
 
-    - name: Install pylint
+    - name: Install Python Dev Requirements
       run: pip install -r requirements-dev.txt
 
-    - name: Run Ruff
-      run: bash tools/linter/run_ruff.sh
+    - name: Run Python Linter
+      run:  ./tools/linter/run_ruff.sh
+
+    - name: Run Shell Linter
+      run:  ./tools/linter/run_shell_linter.sh

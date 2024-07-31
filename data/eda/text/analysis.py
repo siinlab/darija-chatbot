@@ -8,6 +8,7 @@ from eda.text.utils import (
 	is_latin_word,
 	is_punctuation,
 	is_punctuation_word,
+	is_space,
 	is_symbol,
 	parallel_distribution,
 	parallel_sum,
@@ -19,6 +20,7 @@ from eda.utils import time_execution
 
 __all__ = [
 	"characters_number",
+	"white_spaces_number",
 	"alphabets_number",
 	"punctuations_number",
 	"digits_number",
@@ -47,6 +49,19 @@ def characters_number(text: str) -> int:
 		int: Number of characters
 	"""
 	return len(text)
+
+
+@time_execution
+def white_spaces_number(text: str) -> int:
+	"""Compute the number of white spaces in a text.
+
+	Args:
+		text (str): Text
+
+	Returns:
+		int: Number of white spaces
+	"""
+	return parallel_sum(text, is_space)
 
 
 @time_execution
@@ -162,7 +177,7 @@ def latin_words_number(text: str) -> int:
 
 
 @time_execution
-def digit_words_number(text : str) -> int:
+def digit_words_number(text: str) -> int:
 	"""Compute the number of digit words in a text.
 
 	Args:
@@ -176,7 +191,7 @@ def digit_words_number(text : str) -> int:
 
 
 @time_execution
-def punctuation_words_number(text : str) -> int:
+def punctuation_words_number(text: str) -> int:
 	"""Compute the number of punctuation words in a text.
 
 	Args:
@@ -190,7 +205,7 @@ def punctuation_words_number(text : str) -> int:
 
 
 @time_execution
-def characters_distribution(text : str) -> dict[str, int]:
+def characters_distribution(text: str) -> dict[str, int]:
 	"""Compute the distribution of characters in a text.
 
 	Note:
@@ -206,7 +221,7 @@ def characters_distribution(text : str) -> dict[str, int]:
 
 
 @time_execution
-def words_distribution(text : str) -> dict[str, int]:
+def words_distribution(text: str) -> dict[str, int]:
 	"""Compute the distribution of words in a text.
 
 	Note:
@@ -223,7 +238,7 @@ def words_distribution(text : str) -> dict[str, int]:
 
 
 @time_execution
-def words_length_distribution(text : str) -> dict[int, int]:
+def words_length_distribution(text: str) -> dict[int, int]:
 	"""Compute the distribution of words length in a text.
 
 	Note:
@@ -240,7 +255,7 @@ def words_length_distribution(text : str) -> dict[int, int]:
 
 
 @time_execution
-def sentences_length_distribution(text : str) -> dict[int, int]:
+def sentences_length_distribution(text: str) -> dict[int, int]:
 	"""Compute the distribution of sentences length in a text.
 
 	Note:
@@ -259,7 +274,7 @@ def sentences_length_distribution(text : str) -> dict[int, int]:
 
 
 @time_execution
-def paragraphs_length_distribution(text : str) -> dict[int, int]:
+def paragraphs_length_distribution(text: str) -> dict[int, int]:
 	r"""Compute the distribution of paragraphs length in a text.
 
 	Note:

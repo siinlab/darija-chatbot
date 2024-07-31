@@ -2,6 +2,7 @@
 
 import string
 from collections import Counter, OrderedDict
+from collections.abc import Callable
 
 from joblib import Parallel, delayed
 
@@ -115,6 +116,17 @@ def is_digit(char: str) -> bool:
 	"""
 	return char.isdigit()
 
+def is_space(char: str) -> bool:
+	"""Check if a character is a white space.
+
+	Args:
+		char (str): The character to check.
+
+	Returns:
+		bool: True if the character is a white space, False otherwise.
+	"""
+	return char.isspace()
+
 
 def is_symbol(char: str) -> bool:
 	"""Check if a character is a symbol.
@@ -128,7 +140,8 @@ def is_symbol(char: str) -> bool:
 	Returns:
 		bool: True if the character is a symbol, False otherwise.
 	"""
-	return not (is_alphabet(char) or is_punctuation(char) or is_digit(char))
+	return not (is_alphabet(char) or is_punctuation(char) or is_digit(char) \
+             or is_space(char))
 
 
 def split_to_words(text : str) -> list[str]:
@@ -181,6 +194,7 @@ def parallel_sum(lst: list[any], condition_fn : callable) -> int:
 		return sum(1 for x in chunk if condition_fn(x))
 
 	step = len(lst) // NUMBER_OF_CONCURRENT_JOBS
+	step = max(1, step)
 	chunks = [
 		lst[i * step : (i + 1) * step] for i in range(NUMBER_OF_CONCURRENT_JOBS + 1)
 	]
@@ -192,7 +206,8 @@ def parallel_sum(lst: list[any], condition_fn : callable) -> int:
 	return sum(results)
 
 
-def parallel_distribution(lst: list[any], map_fn: callable | None) -> OrderedDict:
+def parallel_distribution(lst: list[any], map_fn: Callable | None = None) \
+    -> OrderedDict:
 	"""Calculate the distribution of elements in a list.
 
 	Args:

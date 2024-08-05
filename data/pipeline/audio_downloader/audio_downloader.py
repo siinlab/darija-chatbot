@@ -4,7 +4,7 @@ import re
 
 import audiosegment  # type: ignore  # noqa: PGH003
 import requests
-from pytube import Playlist, YouTube  # type: ignore  # noqa: PGH003
+from pytubefix import Playlist, YouTube  # type: ignore  # noqa: PGH003
 from tqdm import tqdm  # type: ignore  # noqa: PGH003
 
 

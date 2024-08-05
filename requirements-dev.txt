@@ -1,2 +1,5 @@
 ruff
 shellcheck-py
+pytube 
+tqdm
+audiosegment

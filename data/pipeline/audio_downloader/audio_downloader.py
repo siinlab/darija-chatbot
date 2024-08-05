@@ -1,4 +1,4 @@
-import logging  # noqa: D100, N999
+import logging  # noqa: D100
 import os
 import re
 

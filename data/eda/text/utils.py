@@ -232,6 +232,7 @@ def parallel_distribution(lst: list[any], map_fn: Callable | None = None) \
 		)
 
 	step = len(lst) // NUMBER_OF_CONCURRENT_JOBS
+	step = max(1, step)
 	chunks = [
 		lst[i * step : (i + 1) * step] for i in range(NUMBER_OF_CONCURRENT_JOBS + 1)
 	]

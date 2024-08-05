@@ -33,8 +33,19 @@ parser.add_argument(
 	help="The path to the data folder.",
 	required=True,
 )
+parser.add_argument(
+	"--run-dir",
+	type=str,
+	help="The path where the logs and plots will be saved.",
+	default="."
+)
 args = parser.parse_args()
 data = args.data
+run_dir = args.run_dir
+run_dir = Path(run_dir)
+if run_dir.exists():
+    run_dir.rmdir()
+run_dir.mkdir(parents=True)
 
 # Read the csv file in the data folder
 csv_files = list(Path(data).glob("*.csv"))
@@ -97,7 +108,7 @@ logger.info(f"Number of paragraphs: {sum(paragraphs_length_hist.values())}")
 
 # Log the results
 topk = 30
-plotter = Plotter()
+plotter = Plotter(run_dir)
 plotter.histogram(chars_hist, filename="characters-frequency", k=topk)
 plotter.histogram(chars_hist, filename="characters-frequency", k=topk, top=False)
 

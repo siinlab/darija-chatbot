@@ -37,7 +37,7 @@ parser.add_argument(
 	"--run-dir",
 	type=str,
 	help="The path where the logs and plots will be saved.",
-	default="."
+	default=".",
 )
 args = parser.parse_args()
 data = args.data

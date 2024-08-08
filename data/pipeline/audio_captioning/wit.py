@@ -13,7 +13,7 @@ from tafrigh import Config, farrigh
 WTI_API_KEY = "LFW3IZAW7KPOV6X3TV2I67A6QJH4OHX4"
 
 
-def transcribe_files(file_paths: list[str], output_path: str) -> None:
+def transcribe_audios(file_paths: list[str], output_path: str) -> None:
 	"""Transcribe the given audio file using the Wit.ai API.
 
 	Args:
@@ -92,4 +92,4 @@ if __name__ == "__main__":
 	# get all audios files
 	audios_files = [f for f in audios_dir.iterdir() if f.is_file()]
 	# transcribe each audio file
-	transcribe_files(audios_files, captions_path)
+	transcribe_audios(audios_files, captions_path)

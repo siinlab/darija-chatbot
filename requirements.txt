@@ -1,0 +1,7 @@
+joblib
+lgg
+pandas
+matplotlib
+tafrigh[wit]
+librosa
+transformers

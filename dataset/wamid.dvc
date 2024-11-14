@@ -1,0 +1,6 @@
+outs:
+- md5: 0729c81881ac608b302df44103439145.dir
+  size: 167552055
+  nfiles: 1007
+  hash: md5
+  path: wamid

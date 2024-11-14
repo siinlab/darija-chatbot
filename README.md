@@ -58,6 +58,9 @@ The main goal of this EDA is to understand the **structure and details** of our 
 1. Clone the repository
 2. Install [DVC](https://dvc.org/doc/install) and set it up.
 3. Optionally, request the storage credentials from the project owner, set the storage credentials using this command: `dvc remote modify --local bunny password <api-key>` and pull the data using `dvc pull`.
+4. Ensure that you're using Python 3.10 or later.
+5. Install the required packages using `pip install -r requirements.txt`.
+
 
 ## License
 

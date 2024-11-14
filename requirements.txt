@@ -8,3 +8,4 @@ transformers
 pytube 
 tqdm
 audiosegment
+pyworld

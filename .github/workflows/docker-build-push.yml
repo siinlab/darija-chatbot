@@ -1,0 +1,45 @@
+name: Build and Push Docker Image to GitHub Container Registry
+
+on:
+  push:
+    branches:
+      - '*' # This triggers the action on any branch push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Extract branch name
+      - name: Get branch name
+        id: get_branch
+        run: |
+          echo "##[group]Extracting branch name"
+          # Extract branch name and replace slashes with hyphens to create a valid Docker tag
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          echo "Branch name extracted: $BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "##[endgroup]"
+
+      # Step 3: Log in to GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+
+      # Step 4: Build the Docker image with branch name tag
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          docker build -t $IMAGE_NAME .
+
+      # Step 5: Push the Docker image to GitHub Container Registry
+      - name: Push Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          docker push $IMAGE_NAME

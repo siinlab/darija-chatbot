@@ -7,8 +7,8 @@ cd "$(dirname "$0")"
 # Install dependencies
 apt-get update -y
 apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
-    libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git
+  libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
+  xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git
 
 # install pyenv
 curl https://pyenv.run | bash
@@ -20,7 +20,7 @@ curl https://pyenv.run | bash
   echo '[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"'
   echo 'eval "$(pyenv init -)"'
   echo 'eval "$(pyenv virtualenv-init -)"'
-} >> ~/.bashrc
+} >>~/.bashrc
 
 # Install Python 3.8.20
 $HOME/.pyenv/bin/pyenv install 3.8.20

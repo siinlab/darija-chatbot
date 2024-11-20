@@ -5,9 +5,10 @@ set -e
 cd "$(dirname "$0")"
 
 # Install dependencies
+apt-get update -y
 apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
     libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev libncursesw5-dev \
-    xz-utils tk-dev libffi-dev liblzma-dev python-openssl git
+    xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git
 
 # install pyenv
 curl https://pyenv.run | bash
@@ -22,7 +23,7 @@ curl https://pyenv.run | bash
 } >> ~/.bashrc
 
 # Install Python 3.8.20
-pyenv install 3.8.20
+$HOME/.pyenv/bin/pyenv install 3.8.20
 
 # Install Python 3.10.15
-pyenv install 3.10.15
+$HOME/.pyenv/bin/pyenv install 3.10.15

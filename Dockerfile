@@ -1,13 +1,22 @@
-FROM ubuntu:24.04
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 WORKDIR /app
 
 # Copy the source code
 COPY . .
 
-# Show the content of the current directory
-RUN ls -la
+# Setup environment
+RUN bash scripts/install-pyenv.sh
+
+SHELL ["/bin/bash", "-c"]
+
+# Test Pyenv
+RUN $HOME/.pyenv/bin/pyenv --version
 
 # Install dependencies
-RUN pip install -r requirements-dev.txt
+RUN source pip install -r requirements-dev.txt
+RUN pip install -r requirements.txt
+
 

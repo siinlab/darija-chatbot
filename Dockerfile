@@ -1,4 +1,5 @@
 FROM ubuntu:22.04
+LABEL org.opencontainers.image.source="https://github.com/siinlab/darija-tts"
 
 SHELL ["/bin/bash", "-c"]
 

@@ -5,9 +5,10 @@ on:
     branches:
       - '*' # This triggers the action on any branch push
 
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: big-runner
 
     steps:
       # Step 1: Checkout the repository

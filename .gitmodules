@@ -4,3 +4,6 @@
 [submodule "models/ArTST/ArTST"]
 	path = models/ArTST/ArTST
 	url = https://github.com/mbzuai-nlp/ArTST
+[submodule "models/ArTST/ArTST-hf"]
+	path = models/ArTST/ArTST-hf
+	url = https://huggingface.co/MBZUAI/ArTST

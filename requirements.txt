@@ -9,3 +9,4 @@ pytube
 tqdm
 audiosegment
 pyworld
+sentencepiece

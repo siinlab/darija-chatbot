@@ -23,7 +23,7 @@ curl https://pyenv.run | bash
 } >>~/.bashrc
 
 # Install Python 3.8.20
-$HOME/.pyenv/bin/pyenv install 3.8.20
+"$HOME/.pyenv/bin/pyenv" install 3.8.20
 
 # Install Python 3.10.15
-$HOME/.pyenv/bin/pyenv install 3.10.15
+"$HOME/.pyenv/bin/pyenv" install 3.10.15

@@ -1,10 +1,9 @@
 name: Python Lint
 
 on:
-  push: 
-  pull_request:
+  push:
     branches:
-      - main
+      - '*' # This triggers the action on any branch push
 
 jobs:
   lint:

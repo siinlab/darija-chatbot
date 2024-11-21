@@ -4,7 +4,14 @@ on:
   push:
     branches:
       - '*' # This triggers the action on any branch push
-
+    paths:
+      - 'models/**'
+      - 'Dockerfile'
+      - "dataset/**"
+      - "data/**"
+      - "scripts/**"
+      - "requirements.txt"
+      - "requirements-dev.txt"
 
 jobs:
   build:

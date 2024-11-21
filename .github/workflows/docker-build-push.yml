@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    runs-on: runner-name
+    runs-on: second
 
     steps:
       # Step 1: Checkout the repository

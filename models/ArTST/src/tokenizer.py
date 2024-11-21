@@ -28,7 +28,7 @@ def train_tokenizer(corpus_path: str, model_prefix: str, vocab_size: int) -> Non
 
 parser = argparse.ArgumentParser(
     description="Train a tokenizer using sentencepiece.")
-parser.add_argument("--csv_path", type=str, required=True,
+parser.add_argument("--tsv_path", type=str, required=True,
                     help="Path to the corpus file")
 parser.add_argument("--model_prefix", type=str, required=True,
                     help="Prefix for the model files")
@@ -37,23 +37,22 @@ parser.add_argument("--vocab_size", type=int, required=True,
 
 args = parser.parse_args()
 
-csv_path = args.csv_path
+tsv_path = args.tsv_path
 model_prefix = args.model_prefix
 vocab_size = args.vocab_size
 
-# check if the corpus file exists
-if not Path(csv_path).exists():
-    msg = f"Invalid path: {csv_path}"
+# check if the tsv file exists
+if not Path(tsv_path).exists():
+    msg = f"Invalid path: {tsv_path}"
     raise FileNotFoundError(msg)
 
 # Read captions from TSV file and write to a text file
 corpus_path = Path("/tmp/corpus.txt")  # noqa: S108
 with corpus_path.open("w") as f:
-    try:
-        dataframe = pd.read_csv(csv_path)
-    except pd.errors.ParserError:
-        dataframe = pd.read_csv(csv_path, sep=";")
-    for caption in dataframe["caption"]:
+    dataframe = pd.read_csv(tsv_path, sep="\t")
+    # get all strings in second column of dataframe
+    for caption in dataframe.iloc[:, 1]:
+        # write each string as a line in the text file
         f.write(caption + "\n")
 
 # train the tokenizer

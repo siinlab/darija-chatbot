@@ -31,6 +31,12 @@ for folder in */; do
         --audios_dir "$audios_dir" \
         --manifest_path "./manifest.tsv"
 
+    # Run tokenizer script
+    python $src_dir/tokenizer.py \
+        --tsv_path "./manifest.tsv" \
+        --model_prefix "tokenizer" \
+        --vocab_size 4000
+
     # Go back to the dataset directory
     cd ..
 done

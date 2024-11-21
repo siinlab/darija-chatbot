@@ -52,6 +52,7 @@ columns = ["audio", "caption"]
 if not all(col in dataframe.columns for col in columns):
     msg = f"Columns {columns} not found in the csv file"
     raise ValueError(msg)
+dataframe = dataframe[columns]
 
 # Drop rows with missing values
 logger.info(f"Number of rows before dropping missing values: {len(dataframe)}")

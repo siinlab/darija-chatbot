@@ -22,7 +22,8 @@ RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
 # Install dependencies
 RUN pip install -r requirements-dev.txt && pip install -r requirements.txt
 
+# Set up the DVC remote
 ARG CDN_API_KEY
 
 # Pull files from the CDN
-RUN dvc remote modify --local bunny password $CDN_API_KEY && dvc pull
+RUN dvc remote modify --local bunny password $CDN_API_KEY && dvc pull && dvc remote modify --local bunny password 'tmp'

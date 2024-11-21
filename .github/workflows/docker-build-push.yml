@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    runs-on: gpu-runner
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the repository

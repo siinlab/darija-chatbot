@@ -3,6 +3,7 @@
 
 # Artifacts
 run*
+!run*.sh
 figures
 
 # Byte-compiled / optimized / DLL files

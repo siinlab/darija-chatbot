@@ -50,7 +50,20 @@ jobs:
           IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
           docker build -t $IMAGE_NAME . --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}
 
-      # Step 5: Push the Docker image to GitHub Container Registry
+      # Step 5: Remove existing Docker image with the same tag
+      - name: Remove existing image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          echo "Checking for existing image with tag $IMAGE_NAME"
+          EXISTING_IMAGE=$(docker manifest inspect $IMAGE_NAME 2>/dev/null || true)
+          if [ -n "$EXISTING_IMAGE" ]; then
+            echo "Existing image found. Removing..."
+            docker rmi $IMAGE_NAME || true
+          else
+            echo "No existing image found for $IMAGE_NAME"
+          fi
+
+      # Step 6: Push the Docker image to GitHub Container Registry
       - name: Push Docker image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}

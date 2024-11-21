@@ -1,9 +1,9 @@
-ARG CDN_API_KEY
-
 FROM ubuntu:22.04
 LABEL org.opencontainers.image.source="https://github.com/siinlab/darija-tts"
 
 ENV DEBIAN_FRONTEND=noninteractive
+
+SHELL ["/bin/bash", "-c"]
 
 WORKDIR /app
 
@@ -21,6 +21,8 @@ RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
 
 # Install dependencies
 RUN pip install -r requirements-dev.txt && pip install -r requirements.txt
+
+ARG CDN_API_KEY
 
 # Pull files from the CDN
 RUN dvc remote modify --local bunny password $CDN_API_KEY && dvc pull

@@ -31,7 +31,10 @@ if not Path(audios_dir).exists():
 Path(manifest_path).parent.mkdir(parents=True, exist_ok=True)
 
 # read the csv file
-dataframe = pd.read_csv(csv_path)
+try:
+    dataframe = pd.read_csv(csv_path)
+except pd.errors.ParserError:
+    dataframe = pd.read_csv(csv_path, sep=";")
 columns = ["audio", "caption"]
 
 # ensure that the dataframe has the required columns

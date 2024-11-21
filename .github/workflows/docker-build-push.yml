@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: big-runner
+    runs-on: gpu-runner
 
     steps:
       # Step 1: Checkout the repository

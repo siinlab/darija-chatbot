@@ -26,7 +26,7 @@ RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache
 ARG CDN_API_KEY
 
 # Pull files from the CDN
-RUN dvc remote modify --local bunny password $CDN_API_KEY && dvc pull && dvc remote modify --local bunny password 'tmp'
+RUN dvc remote modify --local bunny password $CDN_API_KEY && dvc pull
 
 # Set up ArTST
 # RUN bash models/scripts/setup-artst.sh

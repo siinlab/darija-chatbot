@@ -38,6 +38,9 @@ for folder in */; do
         --output_text_path "./processed_text.txt" \
         --model_prefix "tokenizer"
 
+    # Run fairseq-preprocess
+    fairseq-preprocess --only-source --trainpref="./processed_text.txt" --destdir="./bin_data" --workers=4
+
     # Go back to the dataset directory
     cd ..
 done

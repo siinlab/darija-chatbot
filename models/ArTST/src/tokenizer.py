@@ -3,7 +3,6 @@
 import argparse
 from pathlib import Path
 
-import pandas as pd
 import sentencepiece as spm
 from lgg import logger
 

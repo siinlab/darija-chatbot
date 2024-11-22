@@ -29,13 +29,14 @@ for folder in */; do
     python $src_dir/data.py \
         --csv_path "$csv_file" \
         --audios_dir "$audios_dir" \
-        --manifest_path "./manifest.tsv"
+        --manifest_path "./manifest.tsv" \
+        --transcription_path "./transcription.txt"
 
     # Run tokenizer script
     python $src_dir/tokenizer.py \
-        --tsv_path "./manifest.tsv" \
-        --model_prefix "tokenizer" \
-        --vocab_size 4000
+        --corpus_path "./transcription.txt" \
+        --output_text_path "./processed_text.txt" \
+        --model_prefix "tokenizer"
 
     # Go back to the dataset directory
     cd ..

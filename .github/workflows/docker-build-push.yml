@@ -22,8 +22,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
       
-      - name: submodules recursively
-        run: git submodule update --init --recursive
+      # - name: submodules recursively
+      #   run: git submodule update --init --recursive
 
       # Step 2: Extract branch name
       - name: Get branch name

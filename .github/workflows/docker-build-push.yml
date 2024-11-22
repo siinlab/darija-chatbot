@@ -15,7 +15,7 @@ on:
 
 jobs:
   build:
-    runs-on: second
+    runs-on: third
 
     steps:
       # Step 1: Checkout the repository

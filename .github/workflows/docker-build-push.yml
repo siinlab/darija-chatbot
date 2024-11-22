@@ -62,6 +62,13 @@ jobs:
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
           docker build -t $IMAGE_NAME . --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}
+      
+      # Step 5.1: Print Docker image size
+      - name: Print Docker image size
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          IMAGE_SIZE=$(docker image inspect $IMAGE_NAME --format='{{.Size}}')
+          echo "Docker image size: $((IMAGE_SIZE / 1024 / 1024)) MB"
 
       # Step 6: Push the Docker image to GitHub Container Registry
       - name: Push Docker image

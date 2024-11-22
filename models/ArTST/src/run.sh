@@ -19,6 +19,9 @@ for folder in */; do
     # if it doesn't contain a csv file, skip it
     ls *.csv || continue
 
+    # Remove the previous data
+    rm -rf bin_data embeddings || true
+
     # Get the csv file
     csv_file=$(ls *.csv)
 
@@ -40,6 +43,15 @@ for folder in */; do
 
     # Run fairseq-preprocess
     fairseq-preprocess --only-source --trainpref="./processed_text.txt" --destdir="./bin_data" --workers=4
+
+    # Generate speaker embedding
+    python $src_dir/speaker-embedding.py \
+        --tsv_file "./manifest.tsv" \
+        --output_dir "./embeddings"
+
+    # Generate wav2vec manifest
+    python $src_dir/../fairseq/examples/wav2vec/wav2vec_manifest.py "$audios_dir" \
+        --dest . --ext mp3 --valid-percent 0.1
 
     # Go back to the dataset directory
     cd ..

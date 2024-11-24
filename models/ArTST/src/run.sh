@@ -26,7 +26,28 @@ for folder in */; do
     csv_file=$(ls *.csv)
 
     # get audio folder name
-    audios_dir=$(ls -d */)
+    audios_dir=$(ls -d audio*/)
+
+    # Convert audio files from mp3 to wav
+    cd "$audios_dir"
+    for file in *; do
+        # ignore non mp3 files
+        if [ "${file##*.}" != "mp3" ]; then
+            continue
+        fi
+        output="${file%.mp3}.wav"
+        if [ ! -f "$output" ]; then
+            ffmpeg -i "$file" -ar 16000 "$output"
+        else
+            echo "Skipping $output (already exists)"
+        fi
+    done
+    # Remove mp3 files
+    rm *.mp3 || true
+    cd ..
+
+    # In csv file, replace mp3 with wav
+    sed -i 's/\.mp3/\.wav/g' $csv_file
 
     # Run the Python script
     python $src_dir/data.py \
@@ -42,7 +63,7 @@ for folder in */; do
         --model_prefix "tokenizer"
 
     # Run fairseq-preprocess
-    fairseq-preprocess --only-source --trainpref="./processed_text.txt" --destdir="./bin_data" --workers=4
+    fairseq-preprocess --only-source --trainpref="./processed_text.txt" --destdir="./bin_data" --workers=8
 
     # Generate speaker embedding
     python $src_dir/speaker-embedding.py \
@@ -51,7 +72,12 @@ for folder in */; do
 
     # Generate wav2vec manifest
     python $src_dir/../fairseq/examples/wav2vec/wav2vec_manifest.py "$audios_dir" \
-        --dest . --ext mp3 --valid-percent 0.1
+        --dest . --ext wav --valid-percent 0.1
+
+    # Generate hubert features
+    python $src_dir/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
+        . train $src_dir/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
+        6 1 0 ./hubert_features
 
     # Go back to the dataset directory
     cd ..

@@ -1,5 +1,6 @@
 .DS_Store
 *.csv
+*.pt
 
 # Artifacts
 run*

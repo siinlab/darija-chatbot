@@ -2,7 +2,7 @@
 set -e
 
 # change working directory to the scripts directory
-cd "$(dirname "$0")"
+cd "$(dirname "$0 ")"
 
 # go to ArTST folder
 cd ../ArTST
@@ -33,5 +33,7 @@ python setup.py build_ext --inplace
 pip install git+https://github.com/speechbrain/speechbrain.git@develop
 
 # install other deps
-pip install lgg soundfile
-
+pip install lgg soundfile npy-append-array tensorboardX
+ 
+# download HUBERT checkpoint inside fairseq
+wget https://dl.fbaipublicfiles.com/hubert/hubert_base_ls960.pt -P "$current_dir/fairseq/examples/hubert/simple_kmeans"

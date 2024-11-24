@@ -8,6 +8,13 @@ cd "$(dirname "$0")"
 cd ../ArTST
 current_dir=$(pwd)
 
+# ensure python version is 3.8.20
+version=$(python --version 2>&1 | awk '{print $2}')
+if [ "$version" != "3.8.20" ]; then
+    echo "Please use python 3.8.20. Use" pyenv shell 3.8.20" to switch to the correct version."
+    exit 1
+fi
+
 # pull submodules
 git submodule update --init --recursive
 

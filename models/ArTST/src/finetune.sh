@@ -5,28 +5,21 @@ set -e
 cd "$(dirname "$0")"
 src_dir=$(pwd)
 
-# Download the pretrained checkpoint
-urls = (
-    "https://huggingface.co/MBZUAI/ArTST/blob/main/CLARTTS_ArTSTstar_TTS.pt"
-    "https://huggingface.co/MBZUAI/ArTST/blob/main/CLARTTS_ArTST_TTS.pt"
-)
-
-for url in "${urls[@]}"; do
-    wget -c $url
-done
+checkpoint1=$src_dir/../ArTST-huggingface/CLARTTS_ArTST_TTS.pt
+checkpoint2=$src_dir/../ArTST-huggingface/CLARTTS_ArTSTstar_TTS.pt
 
 # Finetune the model
 cd $src_dir
-DATASET=/name/of/dataset
-DATA_ROOT=/TTS/_text/$DATASET
-LABEL_DIR=/TTS/_labels/$DATASET
-SAVE_DIR=/TTS/_models/$DATASET
+DATASET=darija_tts
+DATA_ROOT=/app/dataset/mohamed-1/bin_data
+LABEL_DIR=/app/dataset/mohamed-1/hubert_features/
+SAVE_DIR=$src_dir/checkpoints
 TRAIN_SET=train
 VALID_SET=valid
 
-BPE_TOKENIZER=/path/to/tokenizer
-USER_DIR=/path/to/artst
-CHECKPOINT_PATH=CLARTTS_ArTST_TTS.pt
+BPE_TOKENIZER=/app/dataset/mohamed-1/tokenizer.model
+USER_DIR=$src_dir/../ArTST/artst
+CHECKPOINT_PATH=$checkpoint1
 
 mkdir -p ${SAVE_DIR}
 

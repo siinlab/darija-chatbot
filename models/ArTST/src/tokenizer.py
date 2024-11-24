@@ -85,7 +85,8 @@ if not Path(corpus_path).exists():
 Path(output_text_path).parent.mkdir(parents=True, exist_ok=True)
 
 # train the tokenizer
-train_tokenizer(corpus_path, model_prefix, vocab_size)
+train_tokenizer(corpus_path, model_prefix, vocab_size, 
+                args.character_coverage, args.model_type)
 
 # tokenize the text
 tokenize_text(corpus_path, model_prefix, output_text_path)

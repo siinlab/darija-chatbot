@@ -87,19 +87,19 @@ train_df = dataframe[val_size:]
 valid_df = dataframe[:val_size]
 
 # write the train and validation dataframes to files
-for df, path in zip([train_df, valid_df], [train_path, valid_path], strict=False):
+for df, path in zip([train_df, valid_df], [train_path, valid_path]):
     df.to_csv(path, index=False)
 
 # read captions from both train and validation dataframes
 # and save them in separate text files
-for df, path in zip([train_df, valid_df], [train_path, valid_path], strict=False):
+for df, path in zip([train_df, valid_df], [train_path, valid_path]):
     with path.with_suffix(".txt").open("w") as file:
         for caption in df["caption"]:
             file.write(caption + "\n")
 
 # Create manifest file per split
 # manifest contains audio path and number of frames
-for df, path in zip([train_df, valid_df], [train_path, valid_path], strict=False):
+for df, path in zip([train_df, valid_df], [train_path, valid_path]):
     manifest = []
     for audio in df["audio"]:
         audio_path = Path(audios_dir) / audio

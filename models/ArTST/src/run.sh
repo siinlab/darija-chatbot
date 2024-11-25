@@ -59,37 +59,40 @@ for folder in */; do
 
     # TODO: normalize text by removing punctuation, digits, etc.
 
-    # Run the Python script
+    # Run the Python script to create train and valid csv files
+    # and create train and valid text files
+    # and create train and valid (manifest) tsv files
     python $src_dir/data.py \
         --csv_path "$csv_file" \
         --audios_dir "$audios_dir" \
-        --manifest_path "./manifest.tsv" \
-        --transcription_path "./transcription.txt"
+        --train_path "./train.csv" \
+        --valid_path "./valid.csv" \
+        --val_size 0.1
 
     # Run tokenizer script
-    python $src_dir/tokenizer.py \
-        --corpus_path "./transcription.txt" \
-        --output_text_path "./processed_text.txt" \
-        --model_type "char" \
-        --model_prefix "tokenizer"
+    for split in "train" "valid"; do
+        python $src_dir/tokenizer.py \
+            --corpus_path "./$split.txt" \
+            --output_text_path "./$split-processed.txt" \
+            --model_type "char" \
+            --model_prefix "tokenizer"
+    done
 
     # Run fairseq-preprocess
-    fairseq-preprocess --only-source --trainpref="./processed_text.txt" --destdir="./bin_data" --workers=8
+    fairseq-preprocess --only-source --trainpref="./train-processed.txt" \
+        --trainpref="./valid-processed.txt" --destdir="./bin_data" --workers=8
 
-    # ######################## Prepare audios data ########################
+    ######################## Prepare audios data ########################
 
-    # # Generate wav2vec manifest
-    python $src_dir/../fairseq/examples/wav2vec/wav2vec_manifest.py "$audios_dir" \
-        --dest . --ext wav --valid-percent 0.1
+    for split in "train" "valid"; do
+        # Generate hubert features
+        python $src_dir/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
+            . $split $src_dir/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
+            6 1 0 ./hubert_features # 6 is the number of layers
 
-    # # Generate hubert features
-    python $src_dir/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
-        . train $src_dir/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
-        6 1 0 ./hubert_features
-
-    # Generate speaker embedding
-    python $src_dir/speaker-embedding.py --tsv_file "./train.tsv" --output_dir "./embeddings"
-    python $src_dir/speaker-embedding.py --tsv_file "./valid.tsv" --output_dir "./embeddings"
+        # Generate speaker embedding
+        python $src_dir/speaker-embedding.py --tsv_file "./$split.tsv" --output_dir "./embeddings"
+    done
 
     exit 1
 

@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 from lgg import logger
+import soundfile
 
 logger.setLevel("INFO")
 
@@ -14,16 +15,21 @@ parser.add_argument("--csv_path", type=str, required=True,
                     help="Path to the csv file containing the data")
 parser.add_argument("--audios_dir", type=str, required=True,
                     help="Path to the directory containing the audio files")
-parser.add_argument("--manifest_path", type=str, required=True,
-                    help="Path to the manifest file")
-parser.add_argument("--transcription_path", type=str, required=False,
-                    help="Path to the transcription file")
+parser.add_argument("--train_path", type=str, required=True,
+                    help="Path to the train csv file")
+parser.add_argument("--valid_path", type=str, required=True,
+                    help="Path to the validation csv file")
+parser.add_argument("--val_size", type=float, required=True,
+help="The size of the validation set as a fraction of "
+    "the total number of transcriptions.",
+)
 args = parser.parse_args()
 
 csv_path = args.csv_path
 audios_dir = args.audios_dir
-manifest_path = args.manifest_path
-transcription_path = args.transcription_path
+train_path = args.train_path
+valid_path = args.valid_path
+val_size = args.val_size
 
 # check if all paths are valid
 if not Path(csv_path).exists():
@@ -37,15 +43,15 @@ if not Path(audios_dir).exists():
 audios_dir = Path(audios_dir).resolve()
 
 # create a directory for the manifest file
-Path(manifest_path).parent.mkdir(parents=True, exist_ok=True)
-if transcription_path:
-    Path(transcription_path).parent.mkdir(parents=True, exist_ok=True)
+Path(train_path).parent.mkdir(parents=True, exist_ok=True)
+Path(valid_path).parent.mkdir(parents=True, exist_ok=True)
 
 # print runtime arguments
 logger.info(f"csv_path: {csv_path}")
 logger.info(f"audios_dir: {audios_dir}")
-logger.info(f"manifest_path: {manifest_path}")
-logger.info(f"transcription_path: {transcription_path}")
+logger.info(f"train_path: {train_path}")
+logger.info(f"valid_path: {valid_path}")
+logger.info(f"val_size: {val_size}")
 
 # read the csv file
 try:
@@ -72,16 +78,37 @@ for audio in dataframe["audio"]:
         logger.warning(f"Missing audio file: {audio_path}. Removing the row.")
         dataframe = dataframe[dataframe["audio"] != audio]
 
-# check if transcription file is provided
-if transcription_path:
-    # save captions to a transcription file
-    captions = dataframe["caption"].tolist()
-    with Path(transcription_path).open("w") as f:
-        f.write("\n".join(captions))
+# shuffle the dataframe
+dataframe = dataframe.sample(frac=1).reset_index(drop=True)
 
-# create tsv file where audio contains absolute paths
-dataframe["audio"] = dataframe["audio"].apply(lambda x: str(Path(audios_dir) / x ))
-dataframe.to_csv(manifest_path, sep="\t", index=False, header=False)
+# split the dataframe into train and validation sets
+val_size = int(val_size * len(dataframe))
+train_df = dataframe[val_size:]
+valid_df = dataframe[:val_size]
+
+# write the train and validation dataframes to files
+for df, path in zip([train_df, valid_df], [train_path, valid_path], strict=False):
+    df.to_csv(path, index=False)
+
+# read captions from both train and validation dataframes
+# and save them in separate text files
+for df, path in zip([train_df, valid_df], [train_path, valid_path], strict=False):
+    with path.with_suffix(".txt").open("w") as file:
+        for caption in df["caption"]:
+            file.write(caption + "\n")
+
+# Create manifest file per split
+# manifest contains audio path and number of frames
+for df, path in zip([train_df, valid_df], [train_path, valid_path], strict=False):
+    manifest = []
+    for audio in df["audio"]:
+        audio_path = Path(audios_dir) / audio
+        frames = soundfile.info(audio_path).frames
+        manifest.append(f"{audio_path}\t{frames}")
+    # save manifest to tsv file
+    with path.with_suffix(".tsv").open("w") as file:
+        file.write("/\n")
+        file.write("\n".join(manifest))
 
 # print the number of rows in the manifest file
 logger.info(f"Number of rows in the manifest file: {len(dataframe)}")

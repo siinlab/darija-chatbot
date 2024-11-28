@@ -27,8 +27,8 @@ args = parser.parse_args()
 
 csv_path = args.csv_path
 audios_dir = args.audios_dir
-train_path = args.train_path
-valid_path = args.valid_path
+train_path = Path(args.train_path)
+valid_path = Path(args.valid_path)
 val_size = args.val_size
 
 # check if all paths are valid

@@ -11,8 +11,8 @@ checkpoint2=$src_dir/../ArTST-huggingface/CLARTTS_ArTSTstar_TTS.pt
 # Finetune the model
 cd $src_dir
 DATASET=darija_tts
-DATA_ROOT=/app/dataset/mohamed-1/bin_data
-LABEL_DIR=/app/dataset/mohamed-1/hubert_features/
+DATA_ROOT=/app/dataset/mohamed-1/
+LABEL_DIR=/app/dataset/mohamed-1/
 SAVE_DIR=$src_dir/checkpoints
 TRAIN_SET=train
 VALID_SET=valid

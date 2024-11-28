@@ -22,10 +22,10 @@ for folder in */; do
     echo "Processing: $folder"
 
     # Remove the previous data
-    rm -rf bin_data embeddings hubert_features || true
+    rm -rf embeddings hubert_features || true
 
     # Get the csv file
-    csv_file=$(ls *.csv)
+    csv_file=$(ls data*.csv)
 
     # get audio folder name
     audios_dir=$(ls -d audio*/)
@@ -80,7 +80,7 @@ for folder in */; do
 
     # Run fairseq-preprocess
     fairseq-preprocess --only-source --trainpref="./train-processed.txt" \
-        --trainpref="./valid-processed.txt" --destdir="./bin_data" --workers=8
+        --validpref="./valid-processed.txt" --destdir="." --workers=8
 
     ######################## Prepare audios data ########################
 

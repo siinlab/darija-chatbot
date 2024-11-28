@@ -5,10 +5,9 @@ This README gives an overview of the EDA done for the Moroccan Darija TTS projec
 ## Setup environment
 
 1. Clone the repository
-2. Install [DVC](https://dvc.org/doc/install) and set it up.
-3. Optionally, request the storage credentials from the project owner, set the storage credentials using this command: `dvc remote modify --local bunny password <api-key>` and pull the data using `dvc pull`.
-4. Ensure that you're using Python 3.10 or later.
-5. Install the required packages using `pip install -r requirements.txt`.
+2. Ensure that you're using Python 3.10 or later.
+3. Install the required packages using `pip install -r requirements.txt`.
+4. In case you're planning to contribute, install the development requirement by running: `pip install -r requirements-dev.txt`. That will install [DVC](https://dvc.org/doc/install). To access models and dataset, request the storage credentials from a project maintainer, set the storage credentials using this command: `dvc remote modify --local bunny password <api-key>` and pull the data using `dvc pull`.
 
 ## EDA
 

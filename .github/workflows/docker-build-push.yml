@@ -1,0 +1,77 @@
+name: Build and Push Docker Image to GitHub Container Registry
+
+on:
+  push:
+    branches:
+      - '*' # This triggers the action on any branch push
+    paths:
+      - 'models/**'
+      - 'Dockerfile'
+      - "dataset/**"
+      - "data/**"
+      - "scripts/**"
+      - "requirements.txt"
+      - "requirements-dev.txt"
+
+jobs:
+  build:
+    runs-on: second
+
+    steps:
+      # Step 1: Checkout the repository
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      # - name: submodules recursively
+      #   run: git submodule update --init --recursive
+
+      # Step 2: Extract branch name
+      - name: Get branch name
+        id: get_branch
+        run: |
+          echo "##[group]Extracting branch name"
+          # Extract branch name and replace slashes with hyphens to create a valid Docker tag
+          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
+          echo "Branch name extracted: $BRANCH_NAME"
+          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
+          echo "##[endgroup]"
+
+      # Step 3: Log in to GitHub Container Registry
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
+
+      # Step 4: Remove existing Docker image with the same tag
+      - name: Remove existing image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          echo "Checking for existing image with tag $IMAGE_NAME"
+          EXISTING_IMAGE=$(docker manifest inspect $IMAGE_NAME 2>/dev/null || true)
+          if [ -n "$EXISTING_IMAGE" ]; then
+            echo "Existing image found. Removing..."
+            docker rmi $IMAGE_NAME || true
+          else
+            echo "No existing image found for $IMAGE_NAME"
+          fi
+
+      # Step 5: Build the Docker image with branch name tag
+      - name: Build Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          docker build -t $IMAGE_NAME . --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}
+      
+      # Step 5.1: Print Docker image size
+      - name: Print Docker image size
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          IMAGE_SIZE=$(docker image inspect $IMAGE_NAME --format='{{.Size}}')
+          echo "Docker image size: $((IMAGE_SIZE / 1024 / 1024)) MB"
+
+      # Step 6: Push the Docker image to GitHub Container Registry
+      - name: Push Docker image
+        run: |
+          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
+          docker push $IMAGE_NAME

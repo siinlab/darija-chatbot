@@ -1,0 +1,9 @@
+[submodule "models/ArTST/fairseq"]
+	path = models/ArTST/fairseq
+	url = https://github.com/facebookresearch/fairseq
+[submodule "models/ArTST/ArTST"]
+	path = models/ArTST/ArTST
+	url = https://github.com/mbzuai-nlp/ArTST
+[submodule "models/ArTST/ArTST-huggingface"]
+	path = models/ArTST/ArTST-huggingface
+	url = https://huggingface.co/MBZUAI/ArTST

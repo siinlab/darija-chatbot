@@ -1,8 +1,10 @@
 .DS_Store
 *.csv
+*.pt
 
 # Artifacts
 run*
+!run*.sh
 figures
 
 # Byte-compiled / optimized / DLL files

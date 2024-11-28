@@ -2,9 +2,9 @@
 
 import argparse
 import json
+import sys
 from pathlib import Path
 from shutil import rmtree
-from sys import exit
 
 import pandas as pd
 from lgg import logger
@@ -53,7 +53,7 @@ run_dir.mkdir(parents=True)
 csv_files = list(Path(data).glob("*.csv"))
 if len(csv_files) == 0:
     logger.error(f"No csv files found in {data}.")
-    exit(1)
+    sys.exit(1)
 elif len(csv_files) > 1:
     logger.warning(f"Multiple csv files found in {data}.")
 csv_file = csv_files[0]
@@ -75,7 +75,7 @@ try:
     captions = "\n".join(captions)
 except Exception as e:  # noqa: BLE001
     logger.error(f"Error reading the csv file: {e}", exc_info=True)
-    exit(1)
+    sys.exit(1)
 
 
 # Collect statistics in a dictionary

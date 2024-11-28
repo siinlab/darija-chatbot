@@ -21,16 +21,12 @@ jobs:
       # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      # - name: submodules recursively
-      #   run: git submodule update --init --recursive
 
       # Step 2: Extract branch name
       - name: Get branch name
         id: get_branch
         run: |
           echo "##[group]Extracting branch name"
-          # Extract branch name and replace slashes with hyphens to create a valid Docker tag
           BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
           echo "Branch name extracted: $BRANCH_NAME"
           echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
@@ -44,18 +40,29 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
 
-      # Step 4: Remove existing Docker image with the same tag
-      - name: Remove existing image
+      # Step 4: Delete existing image from GHCR
+      - name: Remove existing image from GHCR
+        env:
+          GITHUB_TOKEN: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
           echo "Checking for existing image with tag $IMAGE_NAME"
-          EXISTING_IMAGE=$(docker manifest inspect $IMAGE_NAME 2>/dev/null || true)
-          if [ -n "$EXISTING_IMAGE" ]; then
-            echo "Existing image found. Removing..."
-            docker rmi $IMAGE_NAME || true
-          else
-            echo "No existing image found for $IMAGE_NAME"
-          fi
+          
+          # Extract image details using the GitHub API
+          REPO=${{ github.repository }}
+          IMAGE_TAG=${{ env.branch_name }}
+          
+          curl -s -H "Authorization: Bearer $GITHUB_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            https://api.github.com/orgs/${{ github.repository_owner }}/packages/container/$REPO/versions \
+            | jq -r --arg tag "$IMAGE_TAG" '.[] | select(.metadata.container.tags[] == $tag) | .id' \
+            | while read -r IMAGE_ID; do
+              echo "Deleting image with ID $IMAGE_ID"
+              curl -X DELETE \
+                -H "Authorization: Bearer $GITHUB_TOKEN" \
+                -H "Accept: application/vnd.github+json" \
+                https://api.github.com/orgs/${{ github.repository_owner }}/packages/container/$REPO/versions/$IMAGE_ID
+            done
 
       # Step 5: Build the Docker image with branch name tag
       - name: Build Docker image

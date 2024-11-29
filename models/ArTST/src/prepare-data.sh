@@ -22,7 +22,7 @@ for folder in */; do
     echo "Processing: $folder"
 
     # Remove the previous data
-    rm -rf embeddings hubert_features || true
+    rm -rf embeddings hubert_features dict.txt || true
 
     # Get the csv file
     csv_file=$(ls data*.csv)
@@ -93,8 +93,6 @@ for folder in */; do
         # Generate speaker embedding
         python $src_dir/speaker-embedding.py --tsv_file "./$split.tsv" --output_dir "./embeddings"
     done
-
-    exit 1
 
     # Go back to the dataset directory
     cd ..

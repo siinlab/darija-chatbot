@@ -10,6 +10,9 @@ from lgg import logger
 from speechbrain.inference.speaker import EncoderClassifier
 from tqdm import tqdm
 
+# Define constants
+EMBEDDING_DIM = 512
+
 # Parse arguments
 parser = argparse.ArgumentParser(description="Compute speaker embedding for audios.")
 parser.add_argument(
@@ -53,7 +56,7 @@ audio_paths = tsv["audio_path"].apply(lambda x: str(root_dir / x))
 
 # Load the speaker encoder
 classifier = EncoderClassifier.from_hparams(
-    source="speechbrain/spkrec-ecapa-voxceleb", run_opts={"device": "cuda"},
+    source="speechbrain/spkrec-xvect-voxceleb", run_opts={"device": "cuda"},
 )
 
 # Compute speaker embedding for each audio and save them
@@ -69,6 +72,11 @@ for path in tqdm(audio_paths):
     filename = Path(path).stem
     output_path = output_dir / f"{filename}.npy"
     embeddings = embeddings.cpu().numpy()
+    embeddings = embeddings.reshape(-1)
+    # ensure shape is [512]
+    if embeddings.shape[0] != EMBEDDING_DIM:
+        msg = "ensuring shape is [512]"
+        raise ValueError(msg)
     with output_path.open("wb") as file:
         np.save(file, embeddings)
 

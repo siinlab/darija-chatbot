@@ -10,8 +10,8 @@ cd ../tts-arabic-pytorch/
 # pull submodules
 git submodule update --init --recursive
 
-# go to repo
-cd tts-arabic-pytorch
+# copy 
+cp ./src/download_files.py ./tts-arabic-pytorch/
 
-# download models
+# download model files
 python download_files.py

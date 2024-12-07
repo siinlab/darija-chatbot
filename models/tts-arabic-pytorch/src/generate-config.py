@@ -12,7 +12,8 @@ from lgg import logger
 
 def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: int,  # noqa: PLR0913
                   train_data_path: str, checkpoint_dir: str,
-                  restore_model: str) -> None:
+                  restore_model: str,
+                  f0_mean: float = 0.0, f0_std: float = 1.0) -> None:
     """Generate a YAML configuration file with the given parameters.
 
     Args:
@@ -22,26 +23,30 @@ def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: i
         train_data_path (str): Path to the directory containing training dataset.
         checkpoint_dir (str): Path to the directory for saving checkpoints.
         restore_model (str): Path to the model to finetune.
+        f0_mean (float): Mean of the F0 values.
+        f0_std (float): Standard deviation of the F0 values.
 
     Returns:
         None
     """
     train_data_path = Path(train_data_path).absolute().resolve()
     restore_model = Path(restore_model).absolute().resolve().as_posix()
+    logs_dir = (Path(checkpoint_dir ) / "../../logs/exp_fp_adv") \
+            .absolute().resolve().as_posix()
     checkpoint_dir = Path(checkpoint_dir).absolute().resolve().as_posix()
     train_wavs_path = (train_data_path / "audios").as_posix()
     train_labels = (train_data_path / "data.csv").as_posix()
     f0_folder_path = (train_data_path / "audios" / "pitches_penn").as_posix()
     data = {
         "restore_model": restore_model,
-        "log_dir": "logs/exp_fp_adv",  # for tensorboard
+        "log_dir": logs_dir,  # for tensorboard
         "checkpoint_dir": checkpoint_dir,
         "train_wavs_path": train_wavs_path,
         "train_labels": train_labels,
         "label_pattern": r'"(?P<filename>.*)" "(?P<raw>.*)"',
         "f0_folder_path": f0_folder_path,
-        "f0_mean": 130.05478,
-        "f0_std": 22.86267,
+        "f0_mean": f0_mean,
+        "f0_std": f0_std,
         "gan_loss_weight": 3.0,
         "feat_loss_weight": 1.0,
         "max_lengths": [20, 30, 40, 50, 80, 100, 160, 210, 300, 5000],
@@ -98,6 +103,18 @@ if __name__ == "__main__":
         default="./pretrained/fastpitch_raw_ms.pth",
         help="Path to the model to restore",
     )
+    parser.add_argument(
+        "--f0_mean",
+        type=float,
+        required=True,
+        help="Mean of the F0 values",
+    )
+    parser.add_argument(
+        "--f0_std",
+        type=float,
+        required=True,
+        help="Standard deviation of the F0 values",
+    )
 
     args = parser.parse_args()
 
@@ -108,6 +125,8 @@ if __name__ == "__main__":
         train_data_path=args.train_data_path,
         checkpoint_dir=args.checkpoint_dir,
         restore_model=args.restore_model,
+        f0_mean=args.f0_mean,
+        f0_std=args.f0_std,
     )
 
 

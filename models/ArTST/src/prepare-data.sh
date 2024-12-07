@@ -11,89 +11,82 @@ cd ../../..
 # Go to dataset directory
 cd dataset
 
-# iterate over all the folders
-for folder in */; do
-    # Go to the folder
-    cd $folder
+# Merge all datasets into one
+dataset_folders=$(ls -d */)
+python $src_dir/merge-datasets.py --datasets ./wamid ./mohamed-1 ./mohamed-2 --output all-datasets
 
-    # if it doesn't contain a csv file, skip it
-    ls *.csv || continue
+# Go to all-datasets directory
+cd all-datasets
 
-    echo "Processing: $folder"
+# Remove the previous data
+rm -rf embeddings hubert_features dict.txt || true
 
-    # Remove the previous data
-    rm -rf embeddings hubert_features dict.txt || true
+# Get the csv file
+csv_file=$(ls data*.csv)
 
-    # Get the csv file
-    csv_file=$(ls data*.csv)
+# get audio folder name
+audios_dir=$(ls -d audio*/)
 
-    # get audio folder name
-    audios_dir=$(ls -d audio*/)
+######################## convert mp3 to wav ########################
 
-    ######################## convert mp3 to wav ########################
+# Convert audio files from mp3 to wav
+cd "$audios_dir"
+echo "Converting mp3 files to wav"
+for file in *; do
+    # ignore non mp3 files
+    if [ "${file##*.}" != "mp3" ]; then
+        continue
+    fi
+    output="${file%.mp3}.wav"
+    if [ ! -f "$output" ]; then
+        ffmpeg -hide_banner -loglevel error -i "$file" -ar 16000 "$output"
+    else
+        echo "Skipping $output (already exists)"
+    fi
+done
+# Remove mp3 files
+rm *.mp3 || true
+echo "Deleted mp3 files"
+cd ..
 
-    # Convert audio files from mp3 to wav
-    cd "$audios_dir"
-    echo "Converting mp3 files to wav"
-    for file in *; do
-        # ignore non mp3 files
-        if [ "${file##*.}" != "mp3" ]; then
-            continue
-        fi
-        output="${file%.mp3}.wav"
-        if [ ! -f "$output" ]; then
-            ffmpeg -hide_banner -loglevel error -i "$file" -ar 16000 "$output"
-        else
-            echo "Skipping $output (already exists)"
-        fi
-    done
-    # Remove mp3 files
-    rm *.mp3 || true
-    echo "Deleted mp3 files"
-    cd ..
+# In csv file, replace mp3 with wav
+sed -i 's/\.mp3/\.wav/g' $csv_file
 
-    # In csv file, replace mp3 with wav
-    sed -i 's/\.mp3/\.wav/g' $csv_file
+######################## Prepare text data ########################
 
-    ######################## Prepare text data ########################
+# TODO: normalize text by removing punctuation, digits, etc.
 
-    # TODO: normalize text by removing punctuation, digits, etc.
+# Run the Python script to create train and valid csv files
+# and create train and valid text files
+# and create train and valid (manifest) tsv files
+python $src_dir/data.py \
+    --csv_path "$csv_file" \
+    --audios_dir "$audios_dir" \
+    --train_path "./train.csv" \
+    --valid_path "./valid.csv" \
+    --val_size 0.1
 
-    # Run the Python script to create train and valid csv files
-    # and create train and valid text files
-    # and create train and valid (manifest) tsv files
-    python $src_dir/data.py \
-        --csv_path "$csv_file" \
-        --audios_dir "$audios_dir" \
-        --train_path "./train.csv" \
-        --valid_path "./valid.csv" \
-        --val_size 0.1
+# Run tokenizer script
+for split in "train" "valid"; do
+    python $src_dir/tokenizer.py \
+        --corpus_path "./$split.txt" \
+        --output_text_path "./$split-processed.txt" \
+        --model_type "char" \
+        --model_prefix "tokenizer"
+done
 
-    # Run tokenizer script
-    for split in "train" "valid"; do
-        python $src_dir/tokenizer.py \
-            --corpus_path "./$split.txt" \
-            --output_text_path "./$split-processed.txt" \
-            --model_type "char" \
-            --model_prefix "tokenizer"
-    done
+# Run fairseq-preprocess
+fairseq-preprocess --only-source --trainpref="./train-processed.txt" \
+    --validpref="./valid-processed.txt" --destdir="." --workers=8
 
-    # Run fairseq-preprocess
-    fairseq-preprocess --only-source --trainpref="./train-processed.txt" \
-        --validpref="./valid-processed.txt" --destdir="." --workers=8
+######################## Prepare audios data ########################
 
-    ######################## Prepare audios data ########################
+for split in "train" "valid"; do
+    # Generate hubert features
+    python $src_dir/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
+        . $split $src_dir/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
+        6 1 0 ./hubert_features # 6 is the number of layers
 
-    for split in "train" "valid"; do
-        # Generate hubert features
-        python $src_dir/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
-            . $split $src_dir/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
-            6 1 0 ./hubert_features # 6 is the number of layers
-
-        # Generate speaker embedding
-        python $src_dir/speaker-embedding.py --tsv_file "./$split.tsv" --output_dir "./embeddings"
-    done
-
-    # Go back to the dataset directory
-    cd ..
+    # Generate speaker embedding
+    python $src_dir/speaker-embedding.py --tsv_file "./$split.tsv" --output_dir "./embeddings"
 done

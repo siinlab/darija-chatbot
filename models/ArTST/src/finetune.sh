@@ -11,15 +11,15 @@ checkpoint2=$src_dir/../ArTST-huggingface/CLARTTS_ArTSTstar_TTS.pt
 # Finetune the model
 cd $src_dir
 DATASET=darija_tts
-DATA_ROOT=/app/dataset/mohamed-1/
-LABEL_DIR=/app/dataset/mohamed-1/
+DATA_ROOT=/app/dataset/all-datasets/
+LABEL_DIR=/app/dataset/all-datasets/
 SAVE_DIR=$src_dir/checkpoints
 TRAIN_SET=train
 VALID_SET=valid
 
-BPE_TOKENIZER=/app/dataset/mohamed-1/tokenizer.model
+BPE_TOKENIZER=/app/dataset/all-datasets/tokenizer.model
 USER_DIR=$src_dir/../ArTST/artst
-CHECKPOINT_PATH=$checkpoint1
+CHECKPOINT_PATH=$checkpoint2
 
 mkdir -p ${SAVE_DIR}
 
@@ -40,7 +40,7 @@ fairseq-train ${DATA_ROOT} \
   --task artst \
   --t5-task t2s \
   --sample-rate 16000 \
-  --num-workers 4 \
+  --num-workers 8 \
   --max-tokens 1000000 \
   --update-freq 4 \
   --bpe-tokenizer ${BPE_TOKENIZER} \
@@ -71,7 +71,7 @@ fairseq-train ${DATA_ROOT} \
   --max-speech-positions 1876 \
   --required-batch-size-multiple 1 \
   --skip-invalid-size-inputs-valid-test \
-  --keep-last-epochs 3 \
+  --keep-last-epochs 1 \
   --validate-after-updates 2000 \
   --validate-interval 2 \
   --log-interval 10 \

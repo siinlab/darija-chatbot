@@ -72,7 +72,7 @@ for path in tqdm(audio_paths):
     filename = Path(path).stem
     output_path = output_dir / f"{filename}.npy"
     embeddings = embeddings.cpu().numpy()
-    embeddings = embeddings.reshape(-1)
+    embeddings = embeddings[0,0]
     # ensure shape is [512]
     if embeddings.shape[0] != EMBEDDING_DIM:
         msg = "ensuring shape is [512]"

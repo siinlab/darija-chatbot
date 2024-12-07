@@ -12,3 +12,4 @@ pyworld
 sentencepiece
 pyyaml
 gdown
+penn

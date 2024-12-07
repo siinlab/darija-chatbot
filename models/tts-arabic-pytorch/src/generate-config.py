@@ -43,7 +43,7 @@ def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: i
         "checkpoint_dir": checkpoint_dir,
         "train_wavs_path": train_wavs_path,
         "train_labels": train_labels,
-        "label_pattern": r'"(?P<filename>.*)" "(?P<raw>.*)"',
+        "label_pattern": r'(?P<filename>.*)\,(?P<raw>.*)',
         "f0_folder_path": f0_folder_path,
         "f0_mean": f0_mean,
         "f0_std": f0_std,

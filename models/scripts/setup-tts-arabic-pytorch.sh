@@ -14,4 +14,5 @@ git submodule update --init --recursive
 cp ./src/download_files.py ./tts-arabic-pytorch/
 
 # download model files
+cd ./tts-arabic-pytorch/
 python download_files.py

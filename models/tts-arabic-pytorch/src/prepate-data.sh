@@ -22,5 +22,4 @@ echo "Std: $std"
 # Generate config file for model training
 cd "$src_dir"
 python generate-config.py --train_data_path "$datasets_dir" --output_path "config.yaml" \
-    --f0_mean "$mean" --f0_std "$std" --restore_model "$repo_dir/pretrained/fastpitch_ar_ms.pth"
-
+    --f0_mean "$mean" --f0_std "$std" --restore_model "$repo_dir/pretrained/fastpitch_raw_ms.pth"

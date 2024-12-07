@@ -67,6 +67,7 @@ def infer_pitch(wav, sr, thr=0.5, sr8k=True, batch_size=1024):
     pitch_res = torch.nn.functional.interpolate(pitch_nn[None,None], size=tar_size)
     if sr8k: pitch_res *= 2
 
+    
     return pitch_res[0]
 
 if gpu is not None:

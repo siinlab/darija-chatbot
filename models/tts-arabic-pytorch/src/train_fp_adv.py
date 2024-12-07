@@ -17,7 +17,8 @@ from utils.data import DynBatchDataset
 from utils import get_config
 from utils.training import save_states_gan as save_states
 
-torch.cuda.set_device('cuda')
+device = 'cuda:0'
+torch.cuda.set_device(device)
 
 # %%
 
@@ -103,7 +104,7 @@ n_epoch, n_iter = 0, 0
 # config.restore_model = './checkpoints/exp_fp_adv/states.pth'
 
 if config.restore_model != '':
-    state_dicts = torch.load(config.restore_model)
+    state_dicts = torch.load(config.restore_model, map_location=device)
     model.load_state_dict(state_dicts['model'])
     if 'model_d' in state_dicts:
         critic.load_state_dict(state_dicts['model_d'], strict=False)

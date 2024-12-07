@@ -12,4 +12,4 @@ cp "$src_dir/train_fp_adv.py" ../tts-arabic-pytorch/
 cd ../tts-arabic-pytorch/
 
 # run script
-python train_fp_adv.py --config_path "$src_dir/config.yaml"
+python train_fp_adv.py --config "$src_dir/config.yaml"

@@ -3,7 +3,7 @@ name: Build and Push Docker Image to GitHub Container Registry
 on:
   push:
     branches:
-      - '*' # This triggers the action on any branch push
+      - 'main'
     paths:
       - 'models/**'
       - 'Dockerfile'

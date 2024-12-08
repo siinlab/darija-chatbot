@@ -58,9 +58,6 @@ for dataset in datasets:
     except Exception:  # noqa: BLE001
         logger.warning(f"Couldn't read csv file {csv_file}. Trying with delimiter ';'.")
         csv = pd.read_csv(csv_file, delimiter=";")
-    finally:
-        logger.error(f"Could not read csv file {csv_file}.")
-        sys.exit(1)
     # Drop rows with missing values
     num_rows = csv.shape[0]
     csv = csv.dropna()

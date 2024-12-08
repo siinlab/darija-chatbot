@@ -5,7 +5,27 @@ cd "$(dirname "$0")"
 
 src_dir=$(pwd)
 repo_dir="$src_dir/../tts-arabic-pytorch"
-datasets_dir="$src_dir/../../../dataset/all-datasets"
+datasets_dir="$src_dir/../../../dataset"
+all_datasets_dir="$src_dir/../../../dataset/all-datasets"
+tools_dir="$src_dir/../../../tools/dataset"
+
+# Delete all-datasets directory if exists
+if [ -d "$all_datasets_dir" ]; then
+    rm -r "$all_datasets_dir"
+fi
+
+# Get all folders in datasets_dir
+folders=$(ls $datasets_dir/*/ -d)
+
+# list folders in one line
+folders=$(echo $folders | tr '\n' ' ')
+echo "Folders: $folders"
+exit 2
+
+# Merge datasets in all-datasets directory
+python $tools_dir/merge-datasets.py --datasets "$folders" --output "$all_datasets_dir"
+
+exit 1
 
 # Extract pitch from audio files
 cd "$repo_dir"

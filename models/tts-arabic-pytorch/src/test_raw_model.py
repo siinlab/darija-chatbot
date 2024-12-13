@@ -12,7 +12,7 @@ parser.add_argument("--ckpt_path", type=str, required=True)
 args = parser.parse_args()
 ckpt_path = args.ckpt_path
 
-model = FastPitch2Wave(ckpt_path).cuda()
+model = FastPitch2Wave(ckpt_path)#.cuda()
 
 text = "اَلسَّلامُ عَلَيكُم يَا صَدِيقِي."
 text = "أَتَاحَتْ لِلْبَائِعِ المُتَجَوِّلِ أنْ يَكُونَ جَاذِباً لِلمُوَاطِنِ الأقَلِّ دَخْلاً."

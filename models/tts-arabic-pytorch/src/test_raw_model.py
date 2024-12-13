@@ -1,9 +1,8 @@
-import sounddevice as sd
-from models.fastpitch import FastPitch2Wave
 import argparse
 
-def remove_diacrits(text: str): 
-    return ''.join([c for c in text if c not in ['َ', 'ِ', 'ُ' , 'ٍ', 'ٌ', 'ْ' , 'ٰ']])
+import torchaudio
+
+from models.fastpitch import FastPitch2Wave
 
 
 # read ckpt_path using argparse
@@ -14,15 +13,11 @@ ckpt_path = args.ckpt_path
 
 model = FastPitch2Wave(ckpt_path)#.cuda()
 
-text = "اَلسَّلامُ عَلَيكُم يَا صَدِيقِي."
-text = "أَتَاحَتْ لِلْبَائِعِ المُتَجَوِّلِ أنْ يَكُونَ جَاذِباً لِلمُوَاطِنِ الأقَلِّ دَخْلاً."
+text = "السلام عليكم صاحبي"
 
 wave = model.tts(text, speaker_id=0, phonemize=False)
 
-sd.play(wave, 22050)
+# save the wave to a file
+wave = wave.unsqueeze(0)  # Add channel dimension if missing
 
-text_ = remove_diacrits(text)
-
-wave = model.tts(text_, speaker_id=0, phonemize=False)
-
-sd.play(wave.cpu(), 22050)
+torchaudio.save("test.wav", wave.cpu(), 22050)

@@ -5,7 +5,7 @@ cd "$(dirname "$0")"
 
 src_dir=$(pwd)
 
-ckpt_path="$1"
+ckpt_path=$(realpath "$1")
 
 # copy updated script file
 cp "$src_dir/test_raw_model.py" ../tts-arabic-pytorch/

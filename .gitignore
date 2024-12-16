@@ -1,6 +1,7 @@
 .DS_Store
 *.csv
 *.pt
+models/tts-arabic-pytorch/src/config.yaml
 
 # Artifacts
 run*

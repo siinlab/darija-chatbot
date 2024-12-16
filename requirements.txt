@@ -10,3 +10,6 @@ tqdm
 audiosegment
 pyworld
 sentencepiece
+pyyaml
+gdown
+penn

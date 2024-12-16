@@ -39,7 +39,7 @@ for file in *; do
     fi
     output="${file%.mp3}.wav"
     if [ ! -f "$output" ]; then
-        ffmpeg -hide_banner -loglevel error -i "$file" -ar 16000 "$output"
+        ffmpeg -hide_banner -loglevel error -i "$file" -ar 16000 -ac 1 "$output"
     else
         echo "Skipping $output (already exists)"
     fi

@@ -1,0 +1,6 @@
+outs:
+- md5: 008cd7f45d7208c9a3f713dc00fde7be.dir
+  size: 77338172
+  nfiles: 1000
+  hash: md5
+  path: mohamed-8

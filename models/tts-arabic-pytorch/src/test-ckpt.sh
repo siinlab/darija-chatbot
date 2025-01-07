@@ -14,4 +14,4 @@ cp "$src_dir/test_raw_model.py" ../tts-arabic-pytorch/
 cd ../tts-arabic-pytorch/
 
 # run script
-python test_raw_model.py --ckpt_path "$ckpt_path"
+python test_raw_model.py --use_cuda --ckpt_path "$ckpt_path" --out_dir "$src_dir/results"

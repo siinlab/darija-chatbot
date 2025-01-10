@@ -20,12 +20,15 @@ cp "$src_dir/test_raw_model.py" ../tts-arabic-pytorch/
 # Go to the directory of the TTS model
 cd ../tts-arabic-pytorch/
 
-# delete results folder
-rm -rf $src_dir/../results || true
-
 # run script
 for ckpt_path in $ckpts_path; do
     ckpt_name=$(basename "$ckpt_path")
     ckpt_name="${ckpt_name%.*}"
+
+    # if $src_dir/../results/$ckpt_name exists, then skip
+    if [ -d "$src_dir/../results/$ckpt_name" ]; then
+        echo "Skipping $ckpt_name"
+        continue
+    fi
     python test_raw_model.py --use_cuda --ckpt_path "$ckpt_path" --out_dir "$src_dir/../results/$ckpt_name"
 done

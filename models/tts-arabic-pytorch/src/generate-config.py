@@ -33,7 +33,7 @@ def generate_yaml(file_path: str, epochs: int, # noqa: PLR0913
     """
     train_data_path = Path(train_data_path).absolute().resolve()
     restore_model = Path(restore_model).absolute().resolve().as_posix()
-    logs_dir = (Path(checkpoint_dir ) / "../../logs/exp_fp_adv") \
+    logs_dir = (Path(checkpoint_dir ) / "../logs/") \
             .absolute().resolve().as_posix()
     checkpoint_dir = Path(checkpoint_dir).absolute().resolve().as_posix()
     train_wavs_path = (train_data_path / "audios").as_posix()

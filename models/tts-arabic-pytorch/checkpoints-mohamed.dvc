@@ -1,0 +1,6 @@
+outs:
+- md5: 1434debc2b6571e6f7a0d20f1212cb76.dir
+  size: 9812072342
+  nfiles: 17
+  hash: md5
+  path: checkpoints-mohamed

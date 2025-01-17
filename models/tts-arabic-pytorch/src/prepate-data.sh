@@ -41,4 +41,6 @@ echo "Std: $std"
 # Generate config file for model training
 cd "$src_dir"
 python generate-config.py --train_data_path "$all_datasets_dir" --output_path "config.yaml" \
-    --f0_mean "$mean" --f0_std "$std" --restore_model "$repo_dir/pretrained/fastpitch_raw_ms.pth"
+    --f0_mean "$mean" --f0_std "$std" --restore_model "$repo_dir/pretrained/fastpitch_raw_ms.pth" \
+    --checkpoint_dir "$src_dir/../checkpoints" \
+    --n_save_states_iter 500 --n_save_backup_iter 500 --epochs 100

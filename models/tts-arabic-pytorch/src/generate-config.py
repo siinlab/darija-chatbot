@@ -10,7 +10,8 @@ import yaml
 from lgg import logger
 
 
-def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: int,  # noqa: PLR0913
+def generate_yaml(file_path: str, epochs: int, # noqa: PLR0913
+                  n_save_states_iter: int, n_save_backup_iter: int,
                   train_data_path: str, checkpoint_dir: str,
                   restore_model: str,
                   f0_mean: float = 0.0, f0_std: float = 1.0) -> None:
@@ -18,6 +19,7 @@ def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: i
 
     Args:
         file_path (str): Path to save the YAML file.
+        epochs (int): Number of epochs.
         n_save_states_iter (int): Number of iterations to save states.
         n_save_backup_iter (int): Number of iterations to save backups.
         train_data_path (str): Path to the directory containing training dataset.
@@ -31,7 +33,7 @@ def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: i
     """
     train_data_path = Path(train_data_path).absolute().resolve()
     restore_model = Path(restore_model).absolute().resolve().as_posix()
-    logs_dir = (Path(checkpoint_dir ) / "../../logs/exp_fp_adv") \
+    logs_dir = (Path(checkpoint_dir ) / "../logs/") \
             .absolute().resolve().as_posix()
     checkpoint_dir = Path(checkpoint_dir).absolute().resolve().as_posix()
     train_wavs_path = (train_data_path / "audios").as_posix()
@@ -59,6 +61,7 @@ def generate_yaml(file_path: str, n_save_states_iter: int, n_save_backup_iter: i
         "d_beta2": 0.99,
         "n_save_states_iter": n_save_states_iter,
         "n_save_backup_iter": n_save_backup_iter,
+        "epochs": epochs,
     }
     with Path(file_path).open("w") as file:
         yaml.dump(data, file, sort_keys=False)
@@ -80,6 +83,12 @@ if __name__ == "__main__":
         required=True,
     )
     parser.add_argument(
+        "--epochs",
+        type=int,
+        default=100,
+        help="Number of epochs",
+    )
+    parser.add_argument(
         "--n_save_states_iter",
         type=int,
         default=100,
@@ -94,7 +103,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--checkpoint_dir",
         type=str,
-        default="./checkpoints/exp_fp_adv",
+        default="./checkpoints/",
         help="Path to the directory for saving checkpoints",
     )
     parser.add_argument(
@@ -120,6 +129,7 @@ if __name__ == "__main__":
 
     generate_yaml(
         file_path=args.output_path,
+        epochs=args.epochs,
         n_save_states_iter=args.n_save_states_iter,
         n_save_backup_iter=args.n_save_backup_iter,
         train_data_path=args.train_data_path,

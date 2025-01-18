@@ -7,8 +7,11 @@ st.title("Darija TTS Generator")
 # Input text
 text = st.text_area("Enter text to convert to speech:", value="السلام عليكم صاحبي")
 
+# Input voice
+voice = st.selectbox("Select TTS voice:", ["Male", "Female"])
+
 # Model selection
-model_name = st.selectbox("Select TTS Model:", ["states_6000", "states_7000"])
+checkpoint = st.selectbox("Select TTS Model:", [f"states_{i}000" for i in range(1, 8)])
 
 # Generate button
 if st.button("Generate Speech"):
@@ -16,7 +19,7 @@ if st.button("Generate Speech"):
 		try:
 			response = requests.post(
 				"http://localhost:8001/generate",
-				json={"text": text, "model_name": model_name},
+				json={"text": text, "voice": voice, "checkpoint": checkpoint},
 			)
 			if response.status_code == 200:
 				audio_bytes = response.content

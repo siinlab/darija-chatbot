@@ -13,3 +13,5 @@ sentencepiece
 pyyaml
 gdown
 penn
+uvicorn
+fastapi

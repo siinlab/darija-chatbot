@@ -23,7 +23,7 @@ if st.button("Generate Speech"):
 			)
 			if response.status_code == 200:
 				audio_bytes = response.content
-				st.audio(audio_bytes, format="audio/wav")
+				st.audio(audio_bytes, format="audio/wav", autoplay=True)
 				st.success("Speech generated successfully!")
 			else:
 				st.error(f"Error: {response.json().get('detail')}")

@@ -6,4 +6,4 @@ UI_DIR=$(pwd)
 
 # Start the streamlit app
 cd "$UI_DIR"
-streamlit run app.py --server.port 8002
+streamlit run Home.py --server.port 8002

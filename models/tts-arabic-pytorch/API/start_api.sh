@@ -7,6 +7,7 @@ TTS_DIR="$DEPLOY_DIR/../tts-arabic-pytorch"
 
 # Copy API files to the TTS directory
 cp $DEPLOY_DIR/*.py $TTS_DIR
+cp $DEPLOY_DIR/*.json $TTS_DIR
 
 # Start the API
 cd "$TTS_DIR"

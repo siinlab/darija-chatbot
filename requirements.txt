@@ -13,3 +13,7 @@ sentencepiece
 pyyaml
 gdown
 penn
+uvicorn
+fastapi
+python-multipart
+streamlit

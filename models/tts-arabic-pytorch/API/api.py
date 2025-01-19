@@ -52,7 +52,7 @@ def transcribe_audio(file: UploadFile):
 		raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/respond")
+@app.post("/chat")
 def respond_to_dialog(dialog: Dialog):
 	try:
 		# convert dialog to python dict

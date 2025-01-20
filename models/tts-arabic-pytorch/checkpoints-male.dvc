@@ -1,0 +1,6 @@
+outs:
+- md5: 142da5dd134783cfe2c4cd28fc95cfe9.dir
+  size: 577182085
+  nfiles: 1
+  hash: md5
+  path: checkpoints-male

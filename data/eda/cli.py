@@ -154,6 +154,23 @@ if __name__ == "__main__":
 	# Analyze amplitude trend for audio files
 	amplitude_trends = analyze_amplitude_trend(audio_files)
 	bias, slope, mean = zip(*amplitude_trends)  # noqa: B905
+	# Compute number of digits per caption
+	digits_per_caption = dataframe["caption"].apply(
+		lambda x: sum(char.isdigit() for char in x),
+	)
+	# Compute number of latin characters per caption
+	non_arabic_characters = dataframe["caption"].apply(
+		lambda x: sum(
+			not (
+				'\u0600' <= c <= '\u06ff' or
+				'\u0750' <= c <= '\u077f' or
+				'\ufb50' <= c <= '\ufdff' or
+				'\ufe70' <= c <= '\ufeff' or
+				c in {"?", "!", ".", ",", ":", ";", "(", ")", "'", '"', " ", "\n", "\t"}
+			)
+			for c in x
+		),
+	)
 
 	# Add silence proporation, duration, and others to dataframe
 	dataframe["silence"] = silence_proporations
@@ -162,6 +179,8 @@ if __name__ == "__main__":
 	dataframe["bias"] = bias
 	dataframe["slope"] = slope
 	dataframe["mean"] = mean
+	dataframe["digits"] = digits_per_caption
+	dataframe["non_arabic"] = non_arabic_characters
 	# Compute caption length
 	dataframe["length"] = dataframe["caption"].apply(lambda x: len(x))
 	# Compute duration / length ratio

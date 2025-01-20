@@ -23,8 +23,14 @@ CRITERIA = {
 	},
 	"mean": {  # amplitude
 	},
-	"duration_length_ratio": {
+	"duration_length_ratio": {  # seconds/character
 		"min": 0.05,
 		"max": 0.15,
+	},
+	"digits": {  # number of digits
+		"max": 0,
+	},
+	"non_arabic": {  # number of non-Arabic characters
+		"max": 0,
 	},
 }

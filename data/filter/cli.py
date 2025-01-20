@@ -57,6 +57,8 @@ for insight in insights:
 		logger.debug(f"Remaining rows: {len(dataframe)}.")
 	logger.info(f"Filtered data: {len(dataframe)} remaining rows.")
 
+	# keep only audio & caption columns
+	dataframe = dataframe[["audio", "caption"]]
 	# save the filtered data
 	filtered_path = insight.parent / "filtered.csv"
 	dataframe.to_csv(filtered_path, index=False)

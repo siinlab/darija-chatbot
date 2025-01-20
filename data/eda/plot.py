@@ -91,3 +91,19 @@ class Plotter:
 		if show:
 			plt.show()
 		plt.close()
+
+	def box_plot(self, dataframe, filename: str, show: bool = False) -> None:
+		"""Plot a box plot.
+
+		Args:
+			dataframe (pd.DataFrame): The dataframe containing the data.
+			filename (str): The filename of the box plot.
+			show (bool, optional): Whether to display the plot. Defaults to False.
+		"""
+		dataframe.plot(kind="box", subplots=True, layout=(len(dataframe.columns)//3, 4),
+                   figsize=(10, 7))
+		plt.title("Box Plot: " + filename)
+		plt.savefig(self._figures / f"{filename}.png")
+		if show:
+			plt.show()
+		plt.close()

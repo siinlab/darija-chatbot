@@ -8,6 +8,9 @@ root_dir=$(pwd)
 # get list of all dataset folders in the dataset/ directory
 dataset_folders=$(ls -d "$root_dir/dataset"/*/)
 
+# sort the dataset folders
+dataset_folders=$(echo "$dataset_folders" | tr ' ' '\n' | sort)
+
 # change working directory to the data/ directory
 cd "$root_dir/data"
 

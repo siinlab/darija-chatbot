@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 class Plotter:
@@ -63,6 +64,46 @@ class Plotter:
 		plt.title("Histogram: " + filename + (" Top" if top else " Bottom") + f" {k}")
 		sign = "+" if top else "-"
 		plt.savefig(self._figures / f"{filename}{sign}{k}.png")
+		if show:
+			plt.show()
+		plt.close()
+
+	def line_plot(
+		self, y: list, filename: str, show: bool = False, x: list = None
+	) -> None:
+		"""Plot a line plot.
+
+		Args:
+			x (list): The x-axis data.
+			y (list): The y-axis data.
+			filename (str): The filename of the line plot.
+			show (bool, optional): Whether to display the plot. Defaults to False.
+		"""
+		plt.figure(figsize=(12, 6))
+		if x is not None:
+			plt.plot(x, y)
+		else:
+			plt.plot(np.arange(len(y)), y)
+		plt.xlabel("Index")
+		plt.ylabel("Values")
+		plt.title("Line Plot: " + filename)
+		plt.savefig(self._figures / f"{filename}.png")
+		if show:
+			plt.show()
+		plt.close()
+
+	def box_plot(self, dataframe, filename: str, show: bool = False) -> None:
+		"""Plot a box plot.
+
+		Args:
+			dataframe (pd.DataFrame): The dataframe containing the data.
+			filename (str): The filename of the box plot.
+			show (bool, optional): Whether to display the plot. Defaults to False.
+		"""
+		dataframe.plot(kind="box", subplots=True, layout=(len(dataframe.columns)//3, 4),
+                   figsize=(10, 7))
+		plt.title("Box Plot: " + filename)
+		plt.savefig(self._figures / f"{filename}.png")
 		if show:
 			plt.show()
 		plt.close()

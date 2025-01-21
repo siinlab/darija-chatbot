@@ -5,6 +5,7 @@ from eda.text.utils import (
 	is_arabic_word,
 	is_digit,
 	is_digit_word,
+	is_latin,
 	is_latin_word,
 	is_punctuation,
 	is_punctuation_word,
@@ -63,6 +64,20 @@ def white_spaces_number(text: str) -> int:
 	"""
 	return parallel_sum(text, is_space)
 
+@time_execution
+def latin_number(text: str) -> int:
+	"""Compute the number of latin characters in a text.
+
+	Note:
+		Latin characters are a to z characters
+
+	Args:
+		text (str): Text
+
+	Returns:
+		int: Number of latin characters
+	"""
+	return parallel_sum(text, is_latin)
 
 @time_execution
 def alphabets_number(text: str) -> int:

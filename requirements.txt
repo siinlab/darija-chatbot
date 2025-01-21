@@ -17,3 +17,5 @@ uvicorn
 fastapi
 python-multipart
 streamlit
+statsmodels
+anthropic

@@ -99,10 +99,23 @@ def transcribe(wav_path: str):
 	# return the output
 	return transcription
 
+import anthropic
+client = anthropic.Anthropic(
+    api_key=ANTHROPIC_API_KEY,
+)
+
 def respond(messages):
-	outputs = chat_pipeline(messages, max_new_tokens=256, temperature=0.1)
-	assistant_response = outputs[0]["generated_text"][-1]["content"].strip()
-	return assistant_response
+	# outputs = chat_pipeline(messages, max_new_tokens=256, temperature=0.1)
+	# assistant_response = outputs[0]["generated_text"][-1]["content"].strip()
+    messages[0]["content"] = "انا كندوي بالدارجة و بغيت تبقى تجاوبني بها و بغيتك تبقى تجاوبني بلا حروف لاتينية و بلا ارقام:\n" + messages[0]["content"]
+    message = client.messages.create(
+        model="claude-3-5-sonnet-20241022",
+        max_tokens=512,
+        messages=messages
+    )
+    assistant_response = message.content[0].text
+    
+    return assistant_response
 
 if __name__ == "__main__":
 	# test the function

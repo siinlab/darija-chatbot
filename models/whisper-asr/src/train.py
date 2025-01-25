@@ -184,9 +184,22 @@ class DataCollatorSpeechSeq2SeqWithPadding:
 		return batch
 
 
-def compute_metrics(pred):
+def compute_metrics(pred) -> dict[str, float]:  # noqa: ANN001
+	"""Compute the Word Error Rate (WER) for the given predictions and labels.
+
+	Args:
+		pred (transformers.EvalPrediction): A named tuple with two fields:
+			- predictions: The predicted token IDs.
+			- label_ids: The true token IDs.
+
+	Returns:
+		dict: A dictionary containing the WER score with the key "wer".
+	"""
 	pred_ids = pred.predictions
 	label_ids = pred.label_ids
+
+	pred_ids = pred_ids[0]
+	pred_ids = pred_ids.argmax(axis=-1)
 
 	# replace -100 with the pad_token_id
 	label_ids[label_ids == -100] = tokenizer.pad_token_id
@@ -196,7 +209,6 @@ def compute_metrics(pred):
 	label_str = tokenizer.batch_decode(label_ids, skip_special_tokens=True)
 
 	wer = 100 * metric.compute(predictions=pred_str, references=label_str)
-
 	return {"wer": wer}
 
 

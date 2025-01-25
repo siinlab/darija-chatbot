@@ -35,6 +35,84 @@ parser.add_argument(
 	default="openai/whisper-small",
 	help="Whisper model version",
 )
+# Add hyperparameter arguments
+parser.add_argument(
+	"--per_device_train_batch_size",
+	type=int,
+	default=16,
+	help="Batch size per device during training",
+)
+parser.add_argument(
+	"--gradient_accumulation_steps",
+	type=int,
+	default=1,
+	help="Number of gradient accumulation steps",
+)
+parser.add_argument(
+	"--learning_rate",
+	type=float,
+	default=1e-5,
+	help="Learning rate for the optimizer",
+)
+parser.add_argument(
+	"--warmup_steps",
+	type=int,
+	default=500,
+	help="Number of warmup steps for the scheduler",
+)
+parser.add_argument(
+	"--max_steps",
+	type=int,
+	default=150,
+	help="Total number of training steps",
+)
+parser.add_argument(
+	"--fp16",
+	action="store_true",
+	help="Use fp16 mixed precision training",
+)
+parser.add_argument(
+	"--evaluation_strategy",
+	type=str,
+	default="steps",
+	help="Evaluation strategy to adopt during training",
+)
+parser.add_argument(
+	"--per_device_eval_batch_size",
+	type=int,
+	default=8,
+	help="Batch size per device for evaluation",
+)
+parser.add_argument(
+	"--predict_with_generate",
+	action="store_true",
+	help="Use generate to calculate generative metrics",
+)
+parser.add_argument(
+	"--generation_max_length",
+	type=int,
+	default=225,
+	help="Maximum length of the sequence to be generated",
+)
+parser.add_argument(
+	"--save_steps",
+	type=int,
+	default=1000,
+	help="Number of update steps between two checkpoints",
+)
+parser.add_argument(
+	"--eval_steps",
+	type=int,
+	default=1000,
+	help="Number of steps between evaluations",
+)
+parser.add_argument(
+	"--logging_steps",
+	type=int,
+	default=25,
+	help="Log every X updates steps",
+)
+
 args = parser.parse_args()
 
 data_dir = Path(args.data_dir)
@@ -125,25 +203,27 @@ def compute_metrics(pred):
 # load dataset from disk: data_dir
 dataset = load_from_disk(data_dir)
 
+# split the dataset into train and test
+dataset = dataset.train_test_split(test_size=0.1)
+
 data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor=processor)
 metric = evaluate.load("wer")
 
 training_args = Seq2SeqTrainingArguments(
-	output_dir="./whisper-large-v3-ur",  # change to a repo name of your choice
-	per_device_train_batch_size=16,
-	gradient_accumulation_steps=1,  # increase by 2x for every 2x decrease in batch size
-	learning_rate=1e-5,
-	warmup_steps=500,
-	max_steps=150,
-	gradient_checkpointing=True,
-	fp16=True,
-	evaluation_strategy="steps",
-	per_device_eval_batch_size=8,
-	predict_with_generate=True,
-	generation_max_length=225,
-	save_steps=1000,
-	eval_steps=1000,
-	logging_steps=25,
+	output_dir=output_dir,  # change to a repo name of your choice
+	per_device_train_batch_size=args.per_device_train_batch_size,
+	gradient_accumulation_steps=args.gradient_accumulation_steps,
+	learning_rate=args.learning_rate,
+	warmup_steps=args.warmup_steps,
+	max_steps=args.max_steps,
+	fp16=args.fp16,
+	evaluation_strategy=args.evaluation_strategy,
+	per_device_eval_batch_size=args.per_device_eval_batch_size,
+	predict_with_generate=args.predict_with_generate,
+	generation_max_length=args.generation_max_length,
+	save_steps=args.save_steps,
+	eval_steps=args.eval_steps,
+	logging_steps=args.logging_steps,
 	report_to=["tensorboard"],
 	load_best_model_at_end=True,
 	metric_for_best_model="wer",
@@ -156,7 +236,7 @@ trainer = Seq2SeqTrainer(
 	args=training_args,
 	model=model,
 	train_dataset=dataset["train"],
-	eval_dataset=dataset["train"],
+	eval_dataset=dataset["test"],
 	data_collator=data_collator,
 	compute_metrics=compute_metrics,
 	tokenizer=processor.feature_extractor,

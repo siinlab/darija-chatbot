@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Union
 
 import evaluate
 import torch
-from datasets import load_from_disk
+from datasets import load_from_disk, DatasetDict
 from lgg import logger
 from transformers import (
 	Seq2SeqTrainer,
@@ -202,9 +202,11 @@ def compute_metrics(pred):
 
 # load dataset from disk: data_dir
 dataset = load_from_disk(data_dir)
+print(dataset)
 
 # split the dataset into train and test
-dataset = dataset.train_test_split(test_size=0.1)
+train_test = dataset["train"].train_test_split(test_size=0.1)
+dataset = DatasetDict({"train": train_test["train"], "test": train_test["test"]})
 
 data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor=processor)
 metric = evaluate.load("wer")
@@ -243,3 +245,5 @@ trainer = Seq2SeqTrainer(
 )
 
 processor.save_pretrained(training_args.output_dir)
+
+trainer.train()

@@ -5,7 +5,11 @@ repos:
   hooks:
     # Run the linter.
     - id: ruff
-      args: [ --fix ]
+- repo: https://github.com/shellcheck-py/shellcheck-py
+  rev: v0.10.0.1
+  hooks:
+  - id: shellcheck
+    files: \.(bash|sh)$
 
 # Exclude specific directories
 exclude: "models/tts-arabic-pytorch/tts-arabic-pytorch,models/ArTST/ArTST,models/ArTST/ArTST-huggingface,models/ArTST/fairseq"

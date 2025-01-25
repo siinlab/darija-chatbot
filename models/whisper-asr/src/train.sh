@@ -13,7 +13,7 @@ python "$src_dir/train.py" \
    --per_device_train_batch_size 16 \
    --per_device_eval_batch_size 8 \
    --learning_rate 5e-5 \
-   --warmup_steps 200 \
-   --max_steps 1000 --save_steps 2 --eval_steps 1 \
+   --warmup_steps 500 \
+   --max_steps 5000 --save_steps 250 --eval_steps 250 \
    --generation_max_length 512 \
    --fp16

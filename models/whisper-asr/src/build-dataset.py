@@ -31,7 +31,7 @@ tokenizer = WhisperTokenizer.from_pretrained(
 	language="Arabic",
 	task="transcribe",
 )
-feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version)
+feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version, device=0)
 
 # read the output directory
 output_dir = output_path.parent
@@ -124,11 +124,10 @@ logger.info(f"Loading audio data from {csv_files[0]} and {audios_dir}")
 dataset = load_audio_data(csv_path=csv_files[0], audios_dir=audios_dir)
 
 # Preprocess the dataset
-dataset = dataset.map(prepare_dataset, batched=True, batch_size=8)
+dataset = dataset.map(prepare_dataset)
 
 # print datset overview
 logger.info(f"Dataset overview:\n{dataset}")
-
 
 # save the dataset to the output directory
 logger.info(f"Saving dataset to {output_path}")

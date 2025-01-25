@@ -6,6 +6,8 @@ from pathlib import Path
 from lgg import logger
 from transformers import pipeline
 
+logger.setLevel("INFO")
+
 parser = argparse.ArgumentParser(
 	description="Evaluate the Whisper model on few Arabic audios.",
 )
@@ -30,7 +32,7 @@ model = args.model
 
 # Load the model
 logger.info(f"Loading model from {model}")
-model = loaded_pipeline = pipeline(model=model)
+model = pipeline(model=model, task="automatic-speech-recognition", device=0)
 
 # Load the audio files
 audio_paths = []
@@ -47,7 +49,9 @@ logger.info(f"Found {len(audio_paths)} audio files")
 
 
 # Evaluate the model on the audio files
-for audio_path in audio_paths:
-	logger.info(f"Evaluating {audio_path}")
-	result = model(audio_path.as_posix())
-	logger.info(result)
+result = model([audio_path.as_posix() for audio_path in audio_paths])
+
+# pretty print the results
+for i, res in enumerate(result):
+	logger.info(f"Audio {audio_paths[i]}")
+	logger.info(f"Transcription: {res['text']}")

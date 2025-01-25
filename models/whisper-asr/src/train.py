@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Union
 
 import evaluate
 import torch
-from datasets import load_from_disk, DatasetDict
+from datasets import DatasetDict, load_from_disk
 from lgg import logger
 from transformers import (
 	Seq2SeqTrainer,

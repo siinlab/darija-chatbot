@@ -1,19 +1,39 @@
+"""Prepare data for training the Whisper model on the Arabic ASR task."""
+
 import argparse
-import shutil
 import sys
 from pathlib import Path
+from typing import Any
 
 import librosa
 from datasets import Dataset, load_dataset
 from lgg import logger
+from transformers import WhisperFeatureExtractor, WhisperTokenizer
 
 parser = argparse.ArgumentParser(description="Prepare data for training")
 parser.add_argument("--data-dir", type=str, required=True, help="data directory")
 parser.add_argument("--output-path", type=str, required=True, help="output path")
+parser.add_argument(
+	"--whisper-version",
+	type=str,
+	default="openai/whisper-small",
+	help="Whisper model version",
+)
 args = parser.parse_args()
 
 data_dir = Path(args.data_dir)
 output_path = Path(args.output_path)
+whisper_version = args.whisper_version
+
+# load the Whisper tokenizer and feature extractor
+tokenizer = WhisperTokenizer.from_pretrained(
+	whisper_version,
+	language="Arabic",
+	task="transcribe",
+)
+feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version)
+
+# read the output directory
 output_dir = output_path.parent
 
 # check if the data directory exists
@@ -53,7 +73,7 @@ def load_audio_data(csv_path: Path, audios_dir: Path) -> Dataset:
 		Dataset: A dataset containing audio data and corresponding transcripts.
 	"""
 
-	def process_example(example):
+	def process_example(example: dict) -> dict:
 		audio_path = (audios_dir / example["audio"]).as_posix()
 		audio_array, sr = librosa.load(audio_path, sr=16000)
 		return {
@@ -69,9 +89,46 @@ def load_audio_data(csv_path: Path, audios_dir: Path) -> Dataset:
 
 	return dataset.map(process_example, remove_columns=["caption"])
 
+
+def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
+	"""Prepares the dataset by processing the audio data and encoding the target text.
+
+	Args:
+		batch (Dict[str, Any]): A dictionary containing the audio data and target text.
+			- "audio" (Dict[str, Any]): A dictionary with keys:
+				- "array" (np.ndarray): The audio signal array.
+				- "sampling_rate" (int): The sampling rate of the audio signal.
+			- "sentence" (str): The target text to be encoded.
+
+	Returns:
+		Dict[str, Any]: A dictionary with the processed input features and encoded labels.
+			- "input_features" (np.ndarray): The log-Mel input features computed from the audio array.
+			- "labels" (List[int]): The encoded label ids for the target text.
+	"""
+	# load and resample audio data from 48 to 16kHz
+	audio = batch["audio"]
+
+	# compute log-Mel input features from input audio array
+	batch["input_features"] = feature_extractor(
+		audio["array"],
+		sampling_rate=audio["sampling_rate"],
+	).input_features[0]
+
+	# encode target text to label ids
+	batch["labels"] = tokenizer(batch["sentence"]).input_ids
+	return batch
+
+
 # load the audio data
 logger.info(f"Loading audio data from {csv_files[0]} and {audios_dir}")
 dataset = load_audio_data(csv_path=csv_files[0], audios_dir=audios_dir)
+
+# Preprocess the dataset
+dataset = dataset.map(prepare_dataset, batched=True, batch_size=8)
+
+# print datset overview
+logger.info(f"Dataset overview:\n{dataset}")
+
 
 # save the dataset to the output directory
 logger.info(f"Saving dataset to {output_path}")

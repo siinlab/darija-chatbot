@@ -1,11 +1,10 @@
-import argparse
+import argparse  # noqa: D100
+import os
+import shutil
 
 import torchaudio
 
 from models.fastpitch import FastPitch2Wave
-import shutil
-import os
-
 
 # read ckpt_path using argparse
 parser = argparse.ArgumentParser("Test FastPitch2Wave checkpoint")
@@ -22,7 +21,7 @@ out_dir = args.out_dir
 shutil.rmtree(out_dir, ignore_errors=True)
 
 # create out_dir
-os.makedirs(out_dir, exist_ok=True)
+os.makedirs(out_dir, exist_ok=True)  # noqa: PTH103
 
 model = FastPitch2Wave(ckpt_path)
 if use_cuda:
@@ -32,7 +31,7 @@ texts = ["السلام عليكم صاحبي",
          "انا البارح مشيت نعس، ولكن مبغاش يديني نعاس",
             "الله يرحم الشهداء",
             "واش نتا مصطي؟",
-            "الله يهديك ا صاحبي",
+            "الله يهديك ا صاحبي",  # noqa: RUF001
             "تا ش كتقول؟",
             "واش كتفهم؟",
             "داك الكلاس كيخليك تشوف حياتك فين غادا",
@@ -43,11 +42,11 @@ texts = ["السلام عليكم صاحبي",
             "واحد النهار كنت جالس مابيا ماعليا حتى وقف عليا بوليسي",
             "هدا واحد المغربي و الجزائري مشاو لفرنسا ففلوكة",
             "واش فراسك بلي كااع الناس كيتسناو فيك؟",
-            "لا لا لا ا صاحبي، ماكاينش هاد القضية. راك مشيتي غالط و بعيد بزاااااف",
+            "لا لا لا ا صاحبي، ماكاينش هاد القضية. راك مشيتي غالط و بعيد بزاااااف",  # noqa: RUF001
          ]
 for i, text in enumerate(texts):
     wave = model.tts(text, speaker_id=0, phonemize=False)
     # save the wave to a file
     wave = wave.unsqueeze(0)  # Add channel dimension if missing
-    wav_path = os.path.join(out_dir, f"test-{i}.wav")
+    wav_path = os.path.join(out_dir, f"test-{i}.wav")  # noqa: PTH118
     torchaudio.save(wav_path, wave.cpu(), 22050)

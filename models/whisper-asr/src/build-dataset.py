@@ -104,7 +104,7 @@ def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
 		Dict[str, Any]: A dictionary with the processed input features and encoded labels.
 			- "input_features" (np.ndarray): The log-Mel input features computed from the audio array.
 			- "labels" (List[int]): The encoded label ids for the target text.
-	"""
+	"""  # noqa: E501
 	# load and resample audio data from 48 to 16kHz
 	audio = batch["audio"]
 

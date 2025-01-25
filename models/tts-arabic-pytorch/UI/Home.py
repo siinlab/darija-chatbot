@@ -1,4 +1,3 @@
-import streamlit as st
-
+import streamlit as st  # noqa: D100
 
 st.title("Darija with AI")

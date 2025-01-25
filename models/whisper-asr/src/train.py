@@ -4,7 +4,6 @@ import argparse
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Union
 
 import evaluate
 import torch
@@ -119,6 +118,8 @@ data_dir = Path(args.data_dir)
 output_dir = Path(args.output_dir)
 whisper_version = args.whisper_version
 
+IGNORE_INDEX = -100
+
 # load the Whisper tokenizer and feature extractor
 tokenizer = WhisperTokenizer.from_pretrained(
 	whisper_version,
@@ -148,11 +149,33 @@ if not output_dir.exists():
 
 @dataclass
 class DataCollatorSpeechSeq2SeqWithPadding:
+	"""A data collator that pads the input features and labels for speech Seq2Seq tasks.
+
+	Attributes:
+		processor (Any): The processor used for feature extraction and tokenization.
+
+	Methods:
+		__call__(features: list[dict[str, list[int] | torch.Tensor]]) -> dict[str, torch.Tensor]:
+			Collate and pad the input features and labels.
+
+				features (list[dict[str, list[int] | torch.Tensor]]): A list of dictionaries containing input features and labels.
+
+				dict[str, torch.Tensor]: A dictionary containing the padded input features and labels.
 	processor: Any
+	"""  # noqa: E501
 
 	def __call__(
-		self, features: List[Dict[str, Union[List[int], torch.Tensor]]]
-	) -> Dict[str, torch.Tensor]:
+		self,
+		features: list[dict[str, list[int] | torch.Tensor]],
+	) -> dict[str, torch.Tensor]:
+		"""Collate and pad the input features and labels.
+
+		Args:
+			features (list[dict[str, list[int] | torch.Tensor]]): A list of dictionaries
+
+		Returns:
+			dict[str, torch.Tensor]: A dict containing the input features and labels.
+		"""
 		# split inputs and labels since they have to be of different lengths
 		# and need different padding methods
 		# first treat the audio inputs by simply returning torch tensors  # noqa: ERA001
@@ -171,7 +194,8 @@ class DataCollatorSpeechSeq2SeqWithPadding:
 
 		# replace padding with -100 to ignore loss correctly
 		labels = labels_batch["input_ids"].masked_fill(
-			labels_batch.attention_mask.ne(1), -100
+			labels_batch.attention_mask.ne(1),
+			IGNORE_INDEX,
 		)
 
 		# if bos token is appended in previous tokenization step,
@@ -202,7 +226,7 @@ def compute_metrics(pred) -> dict[str, float]:  # noqa: ANN001
 	pred_ids = pred_ids.argmax(axis=-1)
 
 	# replace -100 with the pad_token_id
-	label_ids[label_ids == -100] = tokenizer.pad_token_id
+	label_ids[label_ids == IGNORE_INDEX] = tokenizer.pad_token_id
 
 	# we do not want to group tokens when computing the metrics
 	pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
@@ -214,7 +238,7 @@ def compute_metrics(pred) -> dict[str, float]:  # noqa: ANN001
 
 # load dataset from disk: data_dir
 dataset = load_from_disk(data_dir)
-print(dataset)
+logger.debug(dataset)
 
 # split the dataset into train and test
 train_test = dataset["train"].train_test_split(test_size=0.1)

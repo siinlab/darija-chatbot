@@ -20,22 +20,22 @@ from eda.text.utils import (
 from eda.utils import time_execution
 
 __all__ = [
-	"characters_number",
-	"white_spaces_number",
 	"alphabets_number",
-	"punctuations_number",
-	"digits_number",
-	"symbols_number",
-	"words_number",
 	"arabic_words_number",
-	"latin_words_number",
-	"digit_words_number",
-	"punctuation_words_number",
 	"characters_distribution",
+	"characters_number",
+	"digit_words_number",
+	"digits_number",
+	"latin_words_number",
+	"paragraphs_length_distribution",
+	"punctuation_words_number",
+	"punctuations_number",
+	"sentences_length_distribution",
+	"symbols_number",
+	"white_spaces_number",
 	"words_distribution",
 	"words_length_distribution",
-	"sentences_length_distribution",
-	"paragraphs_length_distribution",
+	"words_number",
 ]
 
 

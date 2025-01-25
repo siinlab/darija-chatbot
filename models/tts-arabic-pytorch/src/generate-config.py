@@ -45,7 +45,7 @@ def generate_yaml(file_path: str, epochs: int, # noqa: PLR0913
         "checkpoint_dir": checkpoint_dir,
         "train_wavs_path": train_wavs_path,
         "train_labels": train_labels,
-        "label_pattern": r'(?P<filename>.*)\,(?P<raw>.*)',
+        "label_pattern": r"(?P<filename>.*)\,(?P<raw>.*)",
         "f0_folder_path": f0_folder_path,
         "f0_mean": f0_mean,
         "f0_std": f0_std,

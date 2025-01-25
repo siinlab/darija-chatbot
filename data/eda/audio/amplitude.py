@@ -12,10 +12,10 @@ def _compute_silence_proportion(audio_path: str) -> tuple[float, float]:
 	"""Compute the duration of silence in the audio file.
 
 	Args:
-	    audio_path (str): Path to the audio file.
+		audio_path (str): Path to the audio file.
 
 	Returns:
-	    tuple[float, float]: Percentage of silence and total duration.
+		tuple[float, float]: Percentage of silence and total duration.
 	"""
 	y, sr = librosa.load(audio_path)
 	if np.max(y) < 0.01:  # noqa: PLR2004
@@ -32,10 +32,10 @@ def _analyze_amplitude_trend(audio_path: str) -> tuple[float, float]:
 	"""Analyze the amplitude trend of the audio file.
 
 	Args:
-	    audio_path (str): Path to the audio file.
+		audio_path (str): Path to the audio file.
 
 	Returns:
-	    tuple[float, float]: Bias and slope of the amplitude trend.
+		tuple[float, float]: Bias and slope of the amplitude trend.
 	"""
 	# Load audio
 	y, _ = librosa.load(audio_path)
@@ -63,11 +63,11 @@ def _snr(y: np.ndarray, y_noise: np.ndarray) -> float:
 	"""Calculate the Signal-to-Noise Ratio (SNR).
 
 	Args:
-	    y (np.ndarray): Original audio signal.
-	    y_noise (np.ndarray): Noisy audio signal.
+		y (np.ndarray): Original audio signal.
+		y_noise (np.ndarray): Noisy audio signal.
 
 	Returns:
-	    float: The SNR value in decibels.
+		float: The SNR value in decibels.
 	"""
 	return 10 * np.log10(np.mean(y**2) / (np.mean((y - y_noise) ** 2) + 1e-9) + 1e-9)
 
@@ -76,10 +76,10 @@ def _compute_snr_ratio(audio_path: str) -> float:
 	"""Compute the Signal-to-Noise Ratio (SNR) ratio of the audio file.
 
 	Args:
-	    audio_path (str): Path to the audio file.
+		audio_path (str): Path to the audio file.
 
 	Returns:
-	    float: SNR ratio in decibels.
+		float: SNR ratio in decibels.
 	"""
 	y, sr = librosa.load(audio_path)
 	rng = np.random.default_rng()
@@ -92,11 +92,11 @@ def compute_silence_proportions(audio_paths: list[str]) -> list[tuple[float, flo
 	"""Compute silence proportions for a list of audio files.
 
 	Args:
-	    audio_paths (list[str]): List of paths to audio files.
+		audio_paths (list[str]): List of paths to audio files.
 
 	Returns:
-	    list[tuple[float, float]]: List of tuples containing silence percentage and total duration.
-	"""
+		list[tuple[float, float]]: List of tuples containing silence percentage and total duration.
+	"""  # noqa: E501
 	return Parallel(n_jobs=-1, backend="multiprocessing")(
 		delayed(_compute_silence_proportion)(path) for path in audio_paths
 	)
@@ -107,10 +107,10 @@ def analyze_amplitude_trend(audio_paths: list[str]) -> list[tuple[float, float]]
 	"""Analyze amplitude trends for a list of audio files.
 
 	Args:
-	    audio_paths (list[str]): List of paths to audio files.
+		audio_paths (list[str]): List of paths to audio files.
 
 	Returns:
-	    list[tuple[float, float]]: List of tuples containing bias and slope.
+		list[tuple[float, float]]: List of tuples containing bias and slope.
 	"""
 	return Parallel(n_jobs=-1, backend="multiprocessing")(
 		delayed(_analyze_amplitude_trend)(path) for path in audio_paths

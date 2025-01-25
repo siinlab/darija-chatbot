@@ -25,8 +25,5 @@ jobs:
     - name: Install Python Dev Requirements
       run: pip install -r requirements-dev.txt
 
-    - name: Run Python Linter
-      run:  ./tools/linter/run_ruff.sh
-
-    - name: Run Shell Linter
-      run:  ./tools/linter/run_shellcheck.sh
+    - name: Check code format
+      run:  pre-commit run --all-files

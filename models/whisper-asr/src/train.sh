@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 # Go to the directory of this script

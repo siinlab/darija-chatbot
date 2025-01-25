@@ -23,7 +23,8 @@ cd "$audios_dir"
 echo "Converting mp3 files to wav"
 
 # Count total mp3 files
-total_files=$(ls *.mp3 2>/dev/null | wc -l)
+# shellcheck disable=SC2012
+total_files=$(ls ./*.mp3 2>/dev/null | wc -l)
 if [ "$total_files" -eq 0 ]; then
     echo "No mp3 files found in $audios_dir"
     exit 0
@@ -43,12 +44,13 @@ convert_file() {
 export -f convert_file
 
 # Use GNU parallel to process files in parallel
-ls *.mp3 | parallel --bar --jobs "$(nproc)" convert_file
+# shellcheck disable=SC2012
+ls ./*.mp3 | parallel --bar --jobs "$(nproc)" convert_file
 
 echo -e "\nConversion complete."
 
 # Remove mp3 files
-rm *.mp3 || true
+rm ./*.mp3 || true
 echo "Deleted mp3 files"
 
 # Update the CSV file to replace .mp3 with .wav

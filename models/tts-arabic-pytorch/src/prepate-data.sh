@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 # Go to the directory of this script
@@ -15,16 +16,17 @@ if [ -d "$all_datasets_dir" ]; then
 fi
 
 # Get all folders in datasets_dir
-folders=$(ls $datasets_dir/*/ -d)
+folders=$(ls "$datasets_dir"/*/ -d)
 
 # list folders in one line
-folders=$(echo $folders | tr '\n' ' ')
+folders=$(echo "$folders" | tr '\n' ' ')
 
 # Merge datasets in all-datasets directory
-python $tools_dir/merge-datasets.py --datasets $folders --output "$all_datasets_dir"
+# shellcheck disable=SC2086
+python "$tools_dir/merge-datasets.py" --datasets $folders --output "$all_datasets_dir"
 
 # Convert mp3 files to wav
-bash $tools_dir/mp3-to-wav.sh "$all_datasets_dir"
+bash "$tools_dir/mp3-to-wav.sh" "$all_datasets_dir"
 
 # Extract pitch from audio files
 cd "$repo_dir"
@@ -34,7 +36,7 @@ output=$(python extract_f0_penn.py --audios_dir "$all_datasets_dir/audios")
 mean=$(echo "$output" | grep -oP "mean \K[0-9.]+")
 std=$(echo "$output" | grep -oP "std \K[0-9.]+")
 
-printf "%s\n" $output
+printf "%s\n" "$output"
 echo "Mean: $mean"
 echo "Std: $std"
 

@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script is copied from https://github.com/mbzuai-nlp/ArTST/blob/main/scripts/TTS/finetune.sh
 # and is modified to fit the project structure
 set -e
@@ -5,12 +6,12 @@ set -e
 cd "$(dirname "$0")"
 src_dir=$(pwd)
 
-checkpoint1=$src_dir/../ArTST-huggingface/CLARTTS_ArTST_TTS.pt
+# checkpoint1=$src_dir/../ArTST-huggingface/CLARTTS_ArTST_TTS.pt
 checkpoint2=$src_dir/../ArTST-huggingface/CLARTTS_ArTSTstar_TTS.pt
 
 # Finetune the model
-cd $src_dir
-DATASET=darija_tts
+cd "$src_dir"
+# DATASET=darija_tts
 DATA_ROOT=/app/dataset/all-datasets/
 LABEL_DIR=/app/dataset/all-datasets/
 SAVE_DIR=$src_dir/checkpoints
@@ -21,18 +22,18 @@ BPE_TOKENIZER=/app/dataset/all-datasets/tokenizer.model
 USER_DIR=$src_dir/../ArTST/artst
 CHECKPOINT_PATH=$checkpoint2
 
-mkdir -p ${SAVE_DIR}
+mkdir -p "${SAVE_DIR}"
 
-fairseq-train ${DATA_ROOT} \
-  --save-dir ${SAVE_DIR} \
-  --tensorboard-logdir ${SAVE_DIR} \
+fairseq-train "${DATA_ROOT}" \
+  --save-dir "${SAVE_DIR}" \
+  --tensorboard-logdir "${SAVE_DIR}" \
   --train-subset ${TRAIN_SET} \
   --valid-subset ${VALID_SET} \
   --hubert-label-dir ${LABEL_DIR} \
   --distributed-world-size 1 \
   --distributed-port 0 \
   --ddp-backend pytorch_ddp \
-  --user-dir ${USER_DIR} \
+  --user-dir "${USER_DIR}" \
   --log-format json \
   --seed 1 \
   --fp16 \
@@ -83,4 +84,4 @@ fairseq-train ${DATA_ROOT} \
   --relative-position-embedding \
   --freeze-encoder-updates 20000 \
   \
-  --finetune-from-model ${CHECKPOINT_PATH}
+  --finetune-from-model "${CHECKPOINT_PATH}"

@@ -162,10 +162,10 @@ if __name__ == "__main__":
 	non_arabic_characters = dataframe["caption"].apply(
 		lambda x: sum(
 			not (
-				'\u0600' <= c <= '\u06ff' or
-				'\u0750' <= c <= '\u077f' or
-				'\ufb50' <= c <= '\ufdff' or
-				'\ufe70' <= c <= '\ufeff' or
+				"\u0600" <= c <= "\u06ff" or
+				"\u0750" <= c <= "\u077f" or
+				"\ufb50" <= c <= "\ufdff" or
+				"\ufe70" <= c <= "\ufeff" or
 				c in {"?", "!", ".", ",", ":", ";", "(", ")", "'", '"', " ", "\n", "\t"}
 			)
 			for c in x

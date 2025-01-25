@@ -1,3 +1,4 @@
+#!/bin/bash
 # This script is copied from https://github.com/mbzuai-nlp/ArTST/blob/main/scripts/TTS/finetune.sh
 # and is modified to fit the project structure
 set -e
@@ -6,12 +7,12 @@ cd "$(dirname "$0")"
 src_dir=$(pwd)
 
 checkpoint1=$src_dir/../ArTST-huggingface/CLARTTS_ArTST_TTS.pt
-checkpoint2=$src_dir/../ArTST-huggingface/CLARTTS_ArTSTstar_TTS.pt
+# checkpoint2=$src_dir/../ArTST-huggingface/CLARTTS_ArTSTstar_TTS.pt
 
 # pretrain the model
-cd $src_dir
+cd "$src_dir"
 
-DATASET=darija_tts
+# DATASET=darija_tts
 DATA_ROOT=/app/dataset/mohamed-1/bin_data
 LABEL_DIR=/app/dataset/mohamed-1/hubert_features/
 USER_DIR=$src_dir/../ArTST/artst
@@ -23,15 +24,15 @@ VALID_SET="test|valid"
 CHECKPOINT_PATH=$checkpoint1
 
 fairseq-train ${DATA_ROOT} \
-    --save-dir ${SAVE_DIR} \
-    --tensorboard-logdir ${SAVE_DIR} \
+    --save-dir "${SAVE_DIR}" \
+    --tensorboard-logdir "${SAVE_DIR}" \
     --train-subset ${TRAIN_SET} \
     --valid-subset ${VALID_SET} \
     --hubert-label-dir ${LABEL_DIR} \
     --distributed-world-size 4 \
     --distributed-port 0 \
     --ddp-backend legacy_ddp \
-    --user-dir ${USER_DIR} \
+    --user-dir "$USER_DIR" \
     --log-format json \
     --seed 1337 \
     --fp16 \
@@ -75,4 +76,4 @@ fairseq-train ${DATA_ROOT} \
     --codebook-prob 0.1 \
     --loss-weights="[10,0.1]" \
     --max-text-positions 600 \
-    --finetune-from-model ${CHECKPOINT_PATH}
+    --finetune-from-model "$CHECKPOINT_PATH"

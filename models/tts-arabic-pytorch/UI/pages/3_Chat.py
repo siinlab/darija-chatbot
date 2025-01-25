@@ -1,5 +1,5 @@
+import requests  # noqa: D100
 import streamlit as st
-import requests
 
 st.title("Chat with AI")
 
@@ -22,18 +22,18 @@ if prompt := st.chat_input("You:"):
 	# Send message to API
 	with st.spinner("AI is typing..."):
 		try:
-			response = requests.post(
+			response = requests.post(  # noqa: S113
 				"http://localhost:8001/chat",
 				json={"messages": st.session_state.text_messages},
 			)
-			if response.status_code == 200:
+			if response.status_code == 200:  # noqa: PLR2004
 				reply = response.json().get("response", "")
 				st.session_state.text_messages.append(
-					{"role": "assistant", "content": reply}
+					{"role": "assistant", "content": reply},
 				)
 				with st.chat_message("assistant"):
 					st.markdown(reply)
 			else:
 				st.error(f"Error: {response.json().get('detail', 'Unknown error')}")
-		except Exception as e:
+		except Exception as e:  # noqa: BLE001
 			st.error(f"An error occurred: {e}")

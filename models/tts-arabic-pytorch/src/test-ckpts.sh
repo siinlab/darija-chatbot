@@ -1,8 +1,9 @@
+#!/bin/bash
 set -e
 
 # Check if the checkpoints directory is provided
 ckpts_dir=$(realpath "$1")
-ckpts_path=$(ls $ckpts_dir/*.pth)
+ckpts_path=$(ls "$ckpts_dir"/*.pth)
 
 # ensure that checkpoints directory is not empty
 if [ -z "$ckpts_path" ]; then

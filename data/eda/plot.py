@@ -69,7 +69,11 @@ class Plotter:
 		plt.close()
 
 	def line_plot(
-		self, y: list, filename: str, show: bool = False, x: list = None
+		self,
+		y: list,
+		filename: str,
+		show: bool = False,  # noqa: FBT001, FBT002
+		x: list | None = None,
 	) -> None:
 		"""Plot a line plot.
 
@@ -92,7 +96,7 @@ class Plotter:
 			plt.show()
 		plt.close()
 
-	def box_plot(self, dataframe, filename: str, show: bool = False) -> None:
+	def box_plot(self, dataframe, filename: str, show: bool = False) -> None:  # noqa: ANN001, FBT001, FBT002
 		"""Plot a box plot.
 
 		Args:
@@ -100,8 +104,12 @@ class Plotter:
 			filename (str): The filename of the box plot.
 			show (bool, optional): Whether to display the plot. Defaults to False.
 		"""
-		dataframe.plot(kind="box", subplots=True, layout=(len(dataframe.columns)//3, 4),
-                   figsize=(10, 7))
+		dataframe.plot(
+			kind="box",
+			subplots=True,
+			layout=(len(dataframe.columns) // 3, 4),
+			figsize=(10, 7),
+		)
 		plt.title("Box Plot: " + filename)
 		plt.savefig(self._figures / f"{filename}.png")
 		if show:

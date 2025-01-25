@@ -1,3 +1,4 @@
+#!/bin/bash
 set -e
 
 # Go to the directory of this script
@@ -12,8 +13,8 @@ cd ../../..
 cd dataset
 
 # Merge all datasets into one
-dataset_folders=$(ls -d */)
-python $src_dir/merge-datasets.py --datasets ./wamid ./mohamed-1 ./mohamed-2 --output all-datasets
+# dataset_folders=$(ls -d */)
+python "$src_dir/merge-datasets.py" --datasets ./wamid ./mohamed-1 ./mohamed-2 --output all-datasets
 
 # Go to all-datasets directory
 cd all-datasets
@@ -45,12 +46,12 @@ for file in *; do
     fi
 done
 # Remove mp3 files
-rm *.mp3 || true
+rm ./*.mp3 || true
 echo "Deleted mp3 files"
 cd ..
 
 # In csv file, replace mp3 with wav
-sed -i 's/\.mp3/\.wav/g' $csv_file
+sed -i 's/\.mp3/\.wav/g' "$csv_file"
 
 ######################## Prepare text data ########################
 
@@ -59,7 +60,7 @@ sed -i 's/\.mp3/\.wav/g' $csv_file
 # Run the Python script to create train and valid csv files
 # and create train and valid text files
 # and create train and valid (manifest) tsv files
-python $src_dir/data.py \
+python "$src_dir/data.py" \
     --csv_path "$csv_file" \
     --audios_dir "$audios_dir" \
     --train_path "./train.csv" \
@@ -68,7 +69,7 @@ python $src_dir/data.py \
 
 # Run tokenizer script
 for split in "train" "valid"; do
-    python $src_dir/tokenizer.py \
+    python "$src_dir/tokenizer.py" \
         --corpus_path "./$split.txt" \
         --output_text_path "./$split-processed.txt" \
         --model_type "char" \
@@ -83,10 +84,10 @@ fairseq-preprocess --only-source --trainpref="./train-processed.txt" \
 
 for split in "train" "valid"; do
     # Generate hubert features
-    python $src_dir/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
-        . $split $src_dir/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
+    python "$src_dir"/../fairseq/examples/hubert/simple_kmeans/dump_hubert_feature.py \
+        . $split "$src_dir"/../fairseq/examples/hubert/simple_kmeans/hubert_base_ls960.pt \
         6 1 0 ./hubert_features # 6 is the number of layers
 
     # Generate speaker embedding
-    python $src_dir/speaker-embedding.py --tsv_file "./$split.tsv" --output_dir "./embeddings"
+    python "$src_dir/speaker-embedding.py" --tsv_file "./$split.tsv" --output_dir "./embeddings"
 done

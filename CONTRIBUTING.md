@@ -50,7 +50,7 @@ Clear, concise, and thorough documentation is vital to this project's success. Y
 
 1. Ensure that your branch names are descriptive and use lowercase letters with hyphens for separation.
 2. Ensure your commit messages are clear and concise.
-3. Ensure that your changes pass all tests and do not introduce new issues. In particular, check for linting errors by setting the the pre-commit hooks using the scripts in [.git-hooks](.git-hooks).
+3. Ensure that your changes pass all tests and do not introduce new issues. In particular, check for linting errors by setting the pre-commit hooks using: `$ pre-commit install`.
 4. Ensure that your code is modular and funcional as much as possible. Avoid writing monolithic functions or classes. Avoid hardcoding values that can be parameterized. Avoid using global variables. Avoid writing tests in the same file as the code.
 5. Ensure that all modules, classes, and functions are documented according to Google-style docstrings.
 6. Ensure that build and runtime files are not included in the repository. Add them to the `.gitignore` file.

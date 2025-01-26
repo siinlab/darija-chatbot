@@ -1,12 +1,12 @@
 """This module contains the main entry point for the Darija TTS API."""
 
 from fastapi import FastAPI
-from utils import append_sys_path
+from utils import append_to_sys_path
 
-append_sys_path(whisper_asr=True)
+append_to_sys_path()
 
 # import routers from model's API directories
-from API.main import router as whisper_asr_router  # noqa: E402
+from whisper_asr.API.main import router as whisper_asr_router  # noqa: E402
 
 app = FastAPI()
 

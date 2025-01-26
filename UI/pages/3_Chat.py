@@ -27,7 +27,7 @@ if prompt := st.chat_input("You:"):
 				json={"messages": st.session_state.text_messages},
 			)
 			if response.status_code == 200:  # noqa: PLR2004
-				reply = response.json().get("response", "")
+				reply = response.json()
 				st.session_state.text_messages.append(
 					{"role": "assistant", "content": reply},
 				)

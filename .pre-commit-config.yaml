@@ -15,7 +15,7 @@ repos:
   rev: v5.0.0  # Use the version you want
   hooks:
     - id: check-added-large-files
-      args: ["--maxkb=512"]
+      args: ["--maxkb=10"]
 
 
 # Exclude specific directories

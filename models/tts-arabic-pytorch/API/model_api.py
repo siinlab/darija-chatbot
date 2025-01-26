@@ -13,7 +13,6 @@ from transformers import (
 	Wav2Vec2CTCTokenizer,
 	Wav2Vec2ForCTC,
 	Wav2Vec2Processor,
-	pipeline,
 )
 
 from models.fastpitch import FastPitch2Wave
@@ -45,14 +44,6 @@ transcription_processor = Wav2Vec2Processor.from_pretrained(
 )
 transcription_model = Wav2Vec2ForCTC.from_pretrained(
 	"boumehdi/wav2vec2-large-xlsr-moroccan-darija",
-)
-
-# Chat model: https://huggingface.co/MBZUAI-Paris/Atlas-Chat-2B
-chat_pipeline = pipeline(
-	"text-generation",
-	model="MBZUAI-Paris/Atlas-Chat-2B",
-	model_kwargs={"torch_dtype": torch.bfloat16},
-	device="cuda" if use_cuda else "cpu",
 )
 
 

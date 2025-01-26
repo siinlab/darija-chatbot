@@ -1,12 +1,12 @@
 import os  # noqa: D100
 import traceback as tb
 
-from fastapi import FastAPI, HTTPException, UploadFile  # import UploadFile
+from fastapi import APIRouter, HTTPException, UploadFile  # import UploadFile
 from fastapi.responses import FileResponse  # import FileResponse
 from model_api import Voice, generate_wav, respond, transcribe
 from pydantic import BaseModel
 
-app = FastAPI()
+app = APIRouter()
 
 
 class GenerateRequest(BaseModel):  # noqa: D101

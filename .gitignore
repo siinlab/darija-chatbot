@@ -3,6 +3,7 @@ tmp
 *.csv
 *.pt
 models/tts-arabic-pytorch/src/config.yaml
+.vscode
 
 # Artifacts
 run*

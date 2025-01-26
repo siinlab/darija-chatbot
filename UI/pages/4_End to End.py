@@ -39,16 +39,13 @@ if send:
 		# Send audio to transcribe endpoint
 		with st.spinner("Transcribing your audio..."):
 			try:
-				files = {"file": uploaded_audio}
+				files = {"files": uploaded_audio}
 				transcribe_response = requests.post(  # noqa: S113
 					"http://localhost:8001/transcribe",
 					files=files,
 				)
 				if transcribe_response.status_code == 200:  # noqa: PLR2004
-					transcription = transcribe_response.json().get(
-						"transcription",
-						[""],
-					)[0]
+					transcription = transcribe_response.json()[0]
 				else:
 					container.error(
 						f"Transcription Error: {transcribe_response.json().get('detail')}",  # noqa: E501
@@ -81,7 +78,7 @@ if send:
 						json={"messages": messages},
 					)
 					if response.status_code == 200:  # noqa: PLR2004
-						reply = response.json().get("response", "")
+						reply = response.json()
 					else:
 						container.error(
 							f"Chat Error: {response.json().get('detail', 'Unknown error')}",  # noqa: E501

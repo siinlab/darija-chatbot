@@ -1,0 +1,41 @@
+restore_model: /Users/ayoub/Desktop/Projects/darija-tts/models/tts-arabic-pytorch/src/pretrained/fastpitch_raw_ms.pth
+log_dir: logs/exp_fp_adv
+checkpoint_dir: /Users/ayoub/Desktop/Projects/darija-tts/models/tts-arabic-pytorch/src/checkpoints/exp_fp_adv
+train_wavs_path: /Users/ayoub/Desktop/Projects/darija-tts/dataset/mohamed-1/audios
+train_labels: /Users/ayoub/Desktop/Projects/darija-tts/dataset/mohamed-1/data.csv
+label_pattern: '"(?P<filename>.*)" "(?P<raw>.*)"'
+f0_folder_path: /Users/ayoub/Desktop/Projects/darija-tts/dataset/mohamed-1/audios/pitches_penn
+f0_mean: 130.05478
+f0_std: 22.86267
+gan_loss_weight: 3.0
+feat_loss_weight: 1.0
+max_lengths:
+- 20
+- 30
+- 40
+- 50
+- 80
+- 100
+- 160
+- 210
+- 300
+- 5000
+batch_sizes:
+- 32
+- 32
+- 32
+- 32
+- 16
+- 16
+- 10
+- 8
+- 6
+- 4
+g_lr: 0.0001
+g_beta1: 0.0
+g_beta2: 0.99
+d_lr: 0.0001
+d_beta1: 0.0
+d_beta2: 0.99
+n_save_states_iter: 100
+n_save_backup_iter: 1000

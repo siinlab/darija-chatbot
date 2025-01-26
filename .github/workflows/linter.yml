@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - '*' # This triggers the action on any branch push
-    paths:
-      - '**/*.sh' # This triggers the action on any shell script push
-      - '**/*.py' # This triggers the action on any python script push
 
 jobs:
   lint:

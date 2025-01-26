@@ -1,7 +1,7 @@
 """This module contains the main entry point for the Darija TTS API."""
 
 from fastapi import FastAPI
-from utils import append_to_sys_path
+from util import append_to_sys_path
 
 append_to_sys_path()
 

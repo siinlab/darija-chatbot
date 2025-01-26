@@ -25,7 +25,8 @@ def predict(audio_paths: list[str]) -> list[str]:
 		list[str]: A list of transcriptions corresponding to the input audio files.
 	"""
 	logger.debug(f"Received {len(audio_paths)} audio files.")
-	return model(audio_paths)
+	result = model(audio_paths)
+	return [res["text"] for res in result]
 
 
 def generate_random_path() -> str:

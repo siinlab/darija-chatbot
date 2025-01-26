@@ -6,7 +6,11 @@ from pathlib import Path
 import torch
 import torchaudio
 
-from models.fastpitch import FastPitch2Wave
+from .utils import append_to_sys_path
+
+append_to_sys_path()
+
+from models.fastpitch import FastPitch2Wave  # noqa: E402
 
 # Define paths
 _here = Path(__file__).resolve().parent

@@ -1,26 +1,26 @@
+---
 name: Python Lint
 
 on:
   push:
     branches:
-      - '*' # This triggers the action on any branch push
+      - '*'  # This triggers the action on any branch push
 
 jobs:
   lint:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.x'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-    - name: Install Python Dev Requirements
-      run: pip install -r requirements-dev.txt
+      - name: Install Python Dev Requirements
+        run: pip install -r requirements-dev.txt
 
-    - name: Check code format
-      run:  pre-commit run --all-files
+      - name: Check code format
+        run: pre-commit run --all-files

@@ -1,0 +1,6 @@
+outs:
+- md5: 349f2ea5168bd8adcb4074acea1eae6c.dir
+  size: 130968926
+  nfiles: 789
+  hash: md5
+  path: random

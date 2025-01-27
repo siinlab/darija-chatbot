@@ -1,3 +1,4 @@
+---
 name: Build and Push Docker Image to GitHub Container Registry
 
 on:
@@ -44,8 +45,9 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
-          docker build -t $IMAGE_NAME . --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}
-      
+          docker build -t $IMAGE_NAME . \
+            --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}
+
       # Step 5: Push the Docker image to GitHub Container Registry
       - name: Push Docker image
         run: |

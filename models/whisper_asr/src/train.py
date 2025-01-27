@@ -1,9 +1,11 @@
 """Train the Whisper model on the Arabic ASR task."""
 
 import argparse
+import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import evaluate
 import torch
@@ -17,6 +19,8 @@ from transformers import (
 	WhisperProcessor,
 	WhisperTokenizer,
 )
+
+num_cores = os.cpu_count() // 4 or 4  # Default to 4 if not detected
 
 parser = argparse.ArgumentParser(
 	description="Train the Whisper model on the Arabic ASR task.",
@@ -164,6 +168,8 @@ class DataCollatorSpeechSeq2SeqWithPadding:
 	processor: Any
 	"""  # noqa: E501
 
+	processor: Any
+
 	def __call__(
 		self,
 		features: list[dict[str, list[int] | torch.Tensor]],
@@ -223,14 +229,14 @@ def compute_metrics(pred) -> dict[str, float]:  # noqa: ANN001
 	label_ids = pred.label_ids
 
 	pred_ids = pred_ids[0]
-	pred_ids = pred_ids.argmax(axis=-1)
+	pred_ids = torch.tensor(pred_ids, device="cuda:0").argmax(axis=-1).cpu()  # 18s
 
 	# replace -100 with the pad_token_id
-	label_ids[label_ids == IGNORE_INDEX] = tokenizer.pad_token_id
+	label_ids[label_ids == IGNORE_INDEX] = tokenizer.pad_token_id  # 1s
 
 	# we do not want to group tokens when computing the metrics
-	pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
-	label_str = tokenizer.batch_decode(label_ids, skip_special_tokens=True)
+	pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)  # 9s
+	label_str = tokenizer.batch_decode(label_ids, skip_special_tokens=True)  # 9s
 
 	wer = 100 * metric.compute(predictions=pred_str, references=label_str)
 	return {"wer": wer}
@@ -241,7 +247,7 @@ dataset = load_from_disk(data_dir)
 logger.debug(dataset)
 
 # split the dataset into train and test
-train_test = dataset["train"].train_test_split(test_size=0.1)
+train_test = dataset["train"].train_test_split(test_size=0.05)
 dataset = DatasetDict({"train": train_test["train"], "test": train_test["test"]})
 
 data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor=processor)
@@ -263,10 +269,11 @@ training_args = Seq2SeqTrainingArguments(
 	eval_steps=args.eval_steps,
 	logging_steps=args.logging_steps,
 	report_to=["tensorboard"],
-	load_best_model_at_end=True,
+	load_best_model_at_end=False,
 	metric_for_best_model="wer",
 	greater_is_better=False,
 	push_to_hub=False,
+	dataloader_num_workers=16,
 )
 
 
@@ -281,5 +288,4 @@ trainer = Seq2SeqTrainer(
 )
 
 processor.save_pretrained(training_args.output_dir)
-
 trainer.train()

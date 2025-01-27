@@ -1,13 +1,13 @@
 """Train the Whisper model on the Arabic ASR task."""
 
 import argparse
-import os
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 import evaluate
+import psutil
 import torch
 from datasets import DatasetDict, load_from_disk
 from lgg import logger
@@ -20,7 +20,8 @@ from transformers import (
 	WhisperTokenizer,
 )
 
-num_cores = os.cpu_count() // 4 or 4  # Default to 4 if not detected
+# get number of physical CPU cores
+num_cores = psutil.cpu_count(logical=False) // 2
 
 parser = argparse.ArgumentParser(
 	description="Train the Whisper model on the Arabic ASR task.",
@@ -273,7 +274,7 @@ training_args = Seq2SeqTrainingArguments(
 	metric_for_best_model="wer",
 	greater_is_better=False,
 	push_to_hub=False,
-	dataloader_num_workers=16,
+	dataloader_num_workers=num_cores,
 )
 
 

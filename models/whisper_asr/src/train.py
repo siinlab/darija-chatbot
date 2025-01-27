@@ -284,7 +284,7 @@ trainer = Seq2SeqTrainer(
 	train_dataset=dataset["train"],
 	eval_dataset=dataset["test"],
 	data_collator=data_collator,
-	compute_metrics=compute_metrics,
+	# compute_metrics=compute_metrics,  # noqa: ERA001
 	tokenizer=processor.feature_extractor,
 )
 

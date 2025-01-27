@@ -1,0 +1,6 @@
+outs:
+- md5: fd2f5f5c9db9b4a35ed81b8db133db1d.dir
+  size: 239451
+  nfiles: 2
+  hash: md5
+  path: random

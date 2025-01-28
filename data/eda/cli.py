@@ -162,29 +162,33 @@ if __name__ == "__main__":
 	non_arabic_characters = dataframe["caption"].apply(
 		lambda x: sum(
 			not (
-				"\u0600" <= c <= "\u06ff" or
-				"\u0750" <= c <= "\u077f" or
-				"\ufb50" <= c <= "\ufdff" or
-				"\ufe70" <= c <= "\ufeff" or
-				c in {"?", "!", ".", ",", ":", ";", "(", ")", "'", '"', " ", "\n", "\t"}
+				"\u0600" <= c <= "\u06ff"
+				or "\u0750" <= c <= "\u077f"
+				or "\ufb50" <= c <= "\ufdff"
+				or "\ufe70" <= c <= "\ufeff"
+				or c
+				in {"?", "!", ".", ",", ":", ";", "(", ")", "'", '"', " ", "\n", "\t"}
 			)
 			for c in x
 		),
 	)
 
 	# Add silence proporation, duration, and others to dataframe
-	dataframe["silence"] = silence_proporations
-	dataframe["duration"] = duration
-	dataframe["snr"] = snr_ratios
-	dataframe["bias"] = bias
-	dataframe["slope"] = slope
-	dataframe["mean"] = mean
-	dataframe["digits"] = digits_per_caption
-	dataframe["non_arabic"] = non_arabic_characters
+	dataframe = dataframe.copy()
+	dataframe.loc[:, "silence"] = silence_proporations
+	dataframe.loc[:, "duration"] = duration
+	dataframe.loc[:, "snr"] = snr_ratios
+	dataframe.loc[:, "bias"] = bias
+	dataframe.loc[:, "slope"] = slope
+	dataframe.loc[:, "mean"] = mean
+	dataframe.loc[:, "digits"] = digits_per_caption
+	dataframe.loc[:, "non_arabic"] = non_arabic_characters
 	# Compute caption length
-	dataframe["length"] = dataframe["caption"].apply(lambda x: len(x))
+	dataframe.loc[:, "length"] = dataframe["caption"].apply(lambda x: len(x))
 	# Compute duration / length ratio
-	dataframe["duration_length_ratio"] = dataframe["duration"] / dataframe["length"]
+	dataframe.loc[:, "duration_length_ratio"] = (
+		dataframe["duration"] / dataframe["length"]
+	)
 
 	################################# Log the results #################################
 

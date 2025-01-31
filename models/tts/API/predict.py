@@ -14,8 +14,8 @@ from models.fastpitch import FastPitch2Wave  # noqa: E402
 
 # Define paths
 _here = Path(__file__).resolve().parent
-female_checkpoints_dir = _here.parent / "checkpoints"
-male_checkpoints_dir = _here.parent / "checkpoints-mohamed"
+female_checkpoints_dir = _here.parent / "checkpoints-female"
+male_checkpoints_dir = _here.parent / "checkpoints-male"
 
 # check if there's a cuda device
 use_cuda = torch.cuda.is_available()

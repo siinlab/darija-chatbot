@@ -1,0 +1,24 @@
+---
+name: Build Docker Image
+
+on:
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: second
+
+    if: >
+      github.event_name == 'issue_comment' &&
+      contains(github.event.comment.body, '@bot build') &&
+      (github.event.issue.pull_request != null)
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Build Docker image
+        run: |
+          docker build . \
+            --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}

@@ -10,7 +10,7 @@ text = st.text_area("Enter text to convert to speech:", value="السلام عل
 voice = st.selectbox("Select TTS voice:", ["Male", "Female"])
 
 # Model selection
-checkpoint = st.selectbox("Select TTS Model:", [f"states_{i}000" for i in range(1, 8)])
+checkpoint = st.selectbox("Select TTS Model:", [f"states_{i}000" for i in range(6, 7)])
 
 # Generate button
 if st.button("Generate Speech"):

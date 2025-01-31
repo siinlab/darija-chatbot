@@ -29,5 +29,5 @@ ARG CDN_API_KEY
 RUN dvc remote modify --local bunny password $CDN_API_KEY && dvc pull dataset/*.dvc
 
 # Overwrite CDN API key
-RUN dvc remote modify --local bunny password 'tmp'
+# RUN dvc remote modify --local bunny password 'tmp'
 

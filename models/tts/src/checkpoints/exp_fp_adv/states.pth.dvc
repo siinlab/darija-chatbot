@@ -1,5 +1,0 @@
-outs:
-- md5: ba56ef5ea6d50a13df702a1d14f32121
-  size: 577172463
-  hash: md5
-  path: states.pth

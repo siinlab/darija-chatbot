@@ -10,3 +10,4 @@
 [submodule "models/tts/tts-arabic-pytorch"]
 	path = models/tts/tts-arabic-pytorch
 	url = https://github.com/nipponjo/tts-arabic-pytorch
+	branch = exp

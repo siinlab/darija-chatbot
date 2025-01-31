@@ -7,7 +7,7 @@ on:
       - created
 
 jobs:
-  build:
+  build-image:
     runs-on: second
 
     if: >

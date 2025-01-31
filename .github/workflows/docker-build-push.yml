@@ -15,7 +15,7 @@ on:
       - "requirements-dev.txt"
 
 jobs:
-  build:
+  build-push-image:
     runs-on: second
 
     steps:

@@ -39,7 +39,7 @@ Due to the size of the datasets or pretrained models, they are not included in t
 # download datasets & models
 dvc pull
 # install dependencies for the TTS system
-bash models/scripts/setup-tts-arabic-pytorch.sh
+bash models/scripts/setup-tts.sh
 bash models/scripts/setup-whisper-asr.sh
 ```
 
@@ -47,9 +47,10 @@ Once you have downloaded the datasets and models, and set up the dependencies, y
 
 ### API
 
-To run the API, use the following command:
+To run the API, use the following commands:
 
 ```bash
+export ANTHROPIC_API_KEY=<your-api-key>
 bash API/start_api.sh
 ```
 
@@ -67,6 +68,19 @@ Currently, this repository provides scripts to finetune the TTS and ASR models.
 To finetune the TTS model, please checkout the files in the [models/tts](models/tts/src) folder.   
 To finetune the ASR model, please checkout the files in the [models/whisper_asr](models/whisper_asr/src) folder.
 
+
 ## License
 
 This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. To view a copy of this license, visit [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+
+
+## Disclaimer
+
+This repository is provided for educational and research purposes only. The author(s) and contributors of this project are not responsible for any misuse, unintended consequences, or unethical applications of the code, datasets, or trained models provided herein. 
+
+By using this repository, you agree that:
+- You are solely responsible for how you use the materials.
+- You will not use the datasets, models, or any derivative works for harmful, illegal, deceptive, or unethical purposes.
+- You acknowledge that the maintainers and contributors assume no liability for any direct or indirect damage resulting from the use of this repository.
+
+If you do not agree with these terms, you must refrain from using this repository.

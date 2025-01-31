@@ -4,8 +4,10 @@ import argparse
 import sys
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import evaluate
+import psutil
 import torch
 from datasets import DatasetDict, load_from_disk
 from lgg import logger
@@ -17,6 +19,9 @@ from transformers import (
 	WhisperProcessor,
 	WhisperTokenizer,
 )
+
+# get number of physical CPU cores
+num_cores = max(psutil.cpu_count(logical=False) // 2, 16)
 
 parser = argparse.ArgumentParser(
 	description="Train the Whisper model on the Arabic ASR task.",
@@ -164,6 +169,8 @@ class DataCollatorSpeechSeq2SeqWithPadding:
 	processor: Any
 	"""  # noqa: E501
 
+	processor: Any
+
 	def __call__(
 		self,
 		features: list[dict[str, list[int] | torch.Tensor]],
@@ -223,14 +230,14 @@ def compute_metrics(pred) -> dict[str, float]:  # noqa: ANN001
 	label_ids = pred.label_ids
 
 	pred_ids = pred_ids[0]
-	pred_ids = pred_ids.argmax(axis=-1)
+	pred_ids = torch.tensor(pred_ids, device="cuda:0").argmax(axis=-1).cpu()  # 18s
 
 	# replace -100 with the pad_token_id
-	label_ids[label_ids == IGNORE_INDEX] = tokenizer.pad_token_id
+	label_ids[label_ids == IGNORE_INDEX] = tokenizer.pad_token_id  # 1s
 
 	# we do not want to group tokens when computing the metrics
-	pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)
-	label_str = tokenizer.batch_decode(label_ids, skip_special_tokens=True)
+	pred_str = tokenizer.batch_decode(pred_ids, skip_special_tokens=True)  # 9s
+	label_str = tokenizer.batch_decode(label_ids, skip_special_tokens=True)  # 9s
 
 	wer = 100 * metric.compute(predictions=pred_str, references=label_str)
 	return {"wer": wer}
@@ -241,7 +248,7 @@ dataset = load_from_disk(data_dir)
 logger.debug(dataset)
 
 # split the dataset into train and test
-train_test = dataset["train"].train_test_split(test_size=0.1)
+train_test = dataset["train"].train_test_split(test_size=0.05)
 dataset = DatasetDict({"train": train_test["train"], "test": train_test["test"]})
 
 data_collator = DataCollatorSpeechSeq2SeqWithPadding(processor=processor)
@@ -252,6 +259,7 @@ training_args = Seq2SeqTrainingArguments(
 	per_device_train_batch_size=args.per_device_train_batch_size,
 	gradient_accumulation_steps=args.gradient_accumulation_steps,
 	learning_rate=args.learning_rate,
+    weight_decay=1e-3,
 	warmup_steps=args.warmup_steps,
 	max_steps=args.max_steps,
 	fp16=args.fp16,
@@ -263,10 +271,11 @@ training_args = Seq2SeqTrainingArguments(
 	eval_steps=args.eval_steps,
 	logging_steps=args.logging_steps,
 	report_to=["tensorboard"],
-	load_best_model_at_end=True,
-	metric_for_best_model="wer",
+	load_best_model_at_end=False,
+	# metric_for_best_model="wer",  # noqa: ERA001
 	greater_is_better=False,
 	push_to_hub=False,
+	dataloader_num_workers=num_cores,
 )
 
 
@@ -276,10 +285,9 @@ trainer = Seq2SeqTrainer(
 	train_dataset=dataset["train"],
 	eval_dataset=dataset["test"],
 	data_collator=data_collator,
-	compute_metrics=compute_metrics,
+	# compute_metrics=compute_metrics,  # noqa: ERA001
 	tokenizer=processor.feature_extractor,
 )
 
 processor.save_pretrained(training_args.output_dir)
-
 trainer.train()

@@ -7,6 +7,7 @@
 [submodule "models/ArTST/ArTST-huggingface"]
 	path = models/ArTST/ArTST-huggingface
 	url = https://huggingface.co/MBZUAI/ArTST
-[submodule "models/tts-arabic-pytorch/tts-arabic-pytorch"]
-	path = models/tts-arabic-pytorch/tts-arabic-pytorch
+[submodule "models/tts/tts-arabic-pytorch"]
+	path = models/tts/tts-arabic-pytorch
 	url = https://github.com/nipponjo/tts-arabic-pytorch
+	branch = exp

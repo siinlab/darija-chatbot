@@ -6,9 +6,13 @@ from pathlib import Path
 from typing import Any
 
 import librosa
+import psutil
 from datasets import Dataset, load_dataset
 from lgg import logger
 from transformers import WhisperFeatureExtractor, WhisperTokenizer
+
+# get number of physical CPU cores
+num_cores = psutil.cpu_count(logical=False) // 2
 
 parser = argparse.ArgumentParser(description="Prepare data for training")
 parser.add_argument("--data-dir", type=str, required=True, help="data directory")
@@ -124,7 +128,7 @@ logger.info(f"Loading audio data from {csv_files[0]} and {audios_dir}")
 dataset = load_audio_data(csv_path=csv_files[0], audios_dir=audios_dir)
 
 # Preprocess the dataset
-dataset = dataset.map(prepare_dataset)
+dataset = dataset.map(prepare_dataset, num_proc=num_cores)
 
 # print datset overview
 logger.info(f"Dataset overview:\n{dataset}")

@@ -5,7 +5,7 @@ set -e
 cd "$(dirname "$0 ")"
 
 # Goto the TTS folder
-cd ../tts-arabic-pytorch/
+cd ../tts/
 
 # pull submodules
 git submodule update --init --recursive

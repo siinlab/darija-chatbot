@@ -1,6 +1,6 @@
 """This module contains the main entry point for the Darija TTS API."""
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request, Response
 from util import append_to_sys_path
 
 append_to_sys_path()
@@ -16,3 +16,9 @@ app = FastAPI()
 app.include_router(whisper_asr_router, tags=["Darija ASR"])
 app.include_router(tts_asr_router, tags=["Darija TTS"])
 app.include_router(chat_router, tags=["Darija Chat"])
+
+# define middleware for storing requests and responses
+@app.middleware("http")
+async def log_requests(request: Request, call_next) -> Response:  # noqa: ANN001
+    """Log requests and responses."""
+    return await call_next(request)

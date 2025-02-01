@@ -31,6 +31,7 @@ COPY ./data ./data
 COPY ./models ./models
 COPY ./API ./API
 COPY ./UI ./UI
+COPY ./.dvc ./.dvc
 
 # Set up the DVC remote
 RUN --mount=type=secret,id=CDN_API_KEY echo "Using secret"

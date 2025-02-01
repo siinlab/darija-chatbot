@@ -1,16 +1,13 @@
 ---
-name: Manual Docker Image Build
+name: Docker Image Build
 
 permissions:
   contents: read
 
 on:
-  workflow_dispatch:
-    inputs:
-      branch:
-        description: 'Branch to build Docker image from'
-        required: true
-        default: 'main'
+  push:
+    branches-ignore:
+      - main
 
 jobs:
   build-image:

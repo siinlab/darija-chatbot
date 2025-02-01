@@ -34,8 +34,8 @@ COPY ./UI ./UI
 COPY ./.dvc ./.dvc
 
 # Set up the DVC remote
-RUN --mount=type=secret,id=CDN_API_KEY echo "Using secret"
+ARG CDN_API_KEY
 
 # Pull files from the CDN
-RUN dvc remote modify --local bunny password $(cat /run/secrets/CDN_API_KEY) && dvc pull;  dvc remote modify --local bunny password 'tmp'
+RUN dvc remote modify --local bunny password "$CDN_API_KEY" && dvc pull;  dvc remote modify --local bunny password "tmp"
 

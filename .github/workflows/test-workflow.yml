@@ -1,0 +1,32 @@
+---
+name: Build Docker Image
+
+permissions:
+  contents: read
+
+on:
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  build:
+    runs-on: third
+
+    if: >
+      github.event_name == 'issue_comment' &&
+      contains(github.event.comment.body, '@bot2 build') &&
+      (github.event.issue.pull_request != null)
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 1
+          ref: refs/pull/${{ github.event.issue.number }}/head
+      - name: Print current branch
+        run: echo "${{ github.event.issue.number }}" && git branch
+      - name: Get branch name
+        id: branch_name
+        run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
+      - name: Print source branch
+        run: echo "Source branch ${{ env.branch }}"

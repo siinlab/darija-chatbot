@@ -31,13 +31,17 @@ COPY ./data ./data
 COPY ./models ./models
 COPY ./API ./API
 COPY ./UI ./UI
-COPY ./.dvc/config ./.dvc/config
-COPY ./.git ./.git
-
+COPY ./.dvc ./.dvc
+RUN git init && \
+    git remote add origin https://github.com/siinlab/darija-tts.git && \
+    git fetch --depth 1 && \
+    git checkout main
+    
 # Set up the DVC remote
 ARG CDN_API_KEY
 
 # Pull files from the CDN
-RUN dvc remote modify --local bunny password "$CDN_API_KEY" && dvc pull
+RUN dvc remote modify --local bunny password "$CDN_API_KEY"
+RUN dvc pull
 RUN dvc remote modify --local bunny password "tmp"
 

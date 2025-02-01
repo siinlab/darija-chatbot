@@ -11,6 +11,13 @@ ARG CDN_API_KEY
 # Set the working directory
 WORKDIR /app
 
+COPY ./dataset ./models ./.dvc ./
+
+# List of all files in /app
+RUN ls -altr
+
+RUN tree
+
 # Copy the source code
 COPY ./scripts ./scripts
 
@@ -31,7 +38,6 @@ ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"
 COPY ./requirements*.txt .
 RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache-dir -r requirements.txt
 
-COPY ./dataset ./models ./.dvc ./
 
 # Pull files from the CDN
 RUN git init && \

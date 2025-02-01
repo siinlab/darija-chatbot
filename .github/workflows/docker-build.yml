@@ -17,7 +17,6 @@ jobs:
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-          ref: ${{ github.event.inputs.branch }}
       - name: Set up Docker Buildx
         # yamllint disable-line
         uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 
@@ -25,7 +24,7 @@ jobs:
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:
           context: .
-          tags: ghcr.io/${{github.repository}}:${{github.event.inputs.branch}}
+          tags: ghcr.io/${{github.repository}}:${{github.ref_name}}
           cache-from: type=gha,key=docker-build-cache
           cache-to: type=gha,key=docker-build-cache,mode=max
           build-args: |

@@ -36,9 +36,11 @@ jobs:
             ${{ runner.os }}-buildx-
 
       - name: Build and Push Docker Image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: .
-          push: false
-          tags: ghcr.io/${{ github.repository }}:${{ env.branch_name }}
-          build-args: CDN_API_KEY=${{ secrets.CDN_API_KEY }}
+          build-args: |
+            CDN_API_KEY=${{ secrets.CDN_API_KEY }}
+          tags: ghcr.io/${{ github.repository }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache

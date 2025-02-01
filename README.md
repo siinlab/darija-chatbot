@@ -1,5 +1,7 @@
 # Moroccan Darija TTS
 
+> Before using this repository, please read the [License](#license) and [Disclaimer](#disclaimer) sections below.
+
 ## Project Overview
 
 This project includes several components to facilitate the development and usage of a Moroccan Darija TTS system:
@@ -33,26 +35,26 @@ The content of the repository is mounted in the `/app` directory of the Docker c
 docker run -it ghcr.io/siinlab/darija-tts:main
 ```
 
-Due to the size of the datasets or pretrained models, they are not included in the Docker image. To download them, use the following command within the Docker container:
+From within the Docker container, run these commands to set up the TTS system:
 
 ```bash
-# download datasets & models
-dvc pull
-# install dependencies for the TTS system
 bash models/scripts/setup-tts.sh
 bash models/scripts/setup-whisper-asr.sh
 ```
 
-Once you have downloaded the datasets and models, and set up the dependencies, you can use the trained models through the API and/or UI. Moreover, you can re-train the models on your own dataset using the provided scripts.
+Once you have set up the dependencies, you can use the trained models through the API and/or UI. Moreover, you can re-train the models on your own dataset using the provided scripts.
 
 ### API
 
 To run the API, use the following commands:
 
 ```bash
-export ANTHROPIC_API_KEY=<your-api-key>
+export ANTHROPIC_API_KEY=<your-api-key> # set it to an empty string ("") if you don't need the chat functionality.
 bash API/start_api.sh
 ```
+
+> By detault the API will try to collect the data it receives in each request and upload it to a server to help train an improved model. To disable this feature, set the `COLLECT_DATA` to `False` in the [data_uploader.py](API/data_uploader.py) script.   
+> If you'd like to contribute to the training data, please contact us to get an API key.
 
 ### UI
 
@@ -71,7 +73,7 @@ To finetune the ASR model, please checkout the files in the [models/whisper_asr]
 
 ## License
 
-This project is licensed under the Creative Commons Attribution-NonCommercial 4.0 International License. To view a copy of this license, visit [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/).
+This project is licensed under the AGPL-3.0 license. For more details, please refer to the [LICENSE](./LICENSE) file.
 
 
 ## Disclaimer

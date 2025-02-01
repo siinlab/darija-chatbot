@@ -1,1 +1,8 @@
 Dockerfile
+.github
+docs
+.gitignore
+.pre-commit-config.yaml
+*.md
+LICENSE
+pyproject.toml

@@ -11,13 +11,6 @@ ARG CDN_API_KEY
 # Set the working directory
 WORKDIR /app
 
-COPY ./dataset ./models ./.dvc ./
-
-# List of all files in /app
-RUN ls -altr
-
-RUN tree
-
 # Copy the source code
 COPY ./scripts ./scripts
 
@@ -38,6 +31,10 @@ ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"
 COPY ./requirements*.txt .
 RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache-dir -r requirements.txt
 
+# Copy the DVC files
+COPY ./dataset ./dataset
+COPY ./models ./models
+COPY ./.dvc ./.dvc
 
 # Pull files from the CDN
 RUN git init && \
@@ -46,4 +43,7 @@ RUN git init && \
     dvc remote remove --local bunny
 
 # Copy the rest of the source code
-COPY ./tools ./data ./API ./UI ./
+COPY ./tools ./tools
+COPY ./data ./data
+COPY ./API ./API
+COPY ./UI ./UI

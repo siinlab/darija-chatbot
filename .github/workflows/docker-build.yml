@@ -12,7 +12,7 @@ on:
 
 jobs:
   build:
-    runs-on: second
+    runs-on: big-runner
 
     # if: >
     #   github.event_name == 'issue_comment' &&

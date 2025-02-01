@@ -33,10 +33,7 @@ jobs:
         with:
           context: .
           tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
-          cache-from: type=gha, key=build-cache-${{ github.ref_name }}
-          cache-to: |
-            ${{ github.ref_name == 'main' &&
-            'type=gha, key=build-cache-${{ github.ref_name }},
-            mode=max' || '' }}
+          cache-from: type=gha
+          cache-to: type=gha,key=build-cache-${{ github.ref_name }}mode=max
           build-args: |
             CDN_API_KEY=${{ secrets.CDN_API_KEY }}

@@ -8,16 +8,15 @@ on:
   issue_comment:
     types:
       - created
-  push:
 
 jobs:
   build:
     runs-on: third
 
-    # if: >
-    #   github.event_name == 'issue_comment' &&
-    #   contains(github.event.comment.body, '@bot build') &&
-    #   (github.event.issue.pull_request != null)
+    if: >
+      github.event_name == 'issue_comment' &&
+      contains(github.event.comment.body, '@bot build') &&
+      (github.event.issue.pull_request != null)
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,7 +24,7 @@ jobs:
           fetch-depth: 1
           ref: ${{ github.event.pull_request.head.ref }}
       - name: Print current branch
-        run: echo ${{ github.event.pull_request.head.ref }} && git branch
+        run: echo "${{ github.event.pull_request.head.ref }}" && git branch
       - name: Set up Docker Buildx
         # yamllint disable-line
         uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 

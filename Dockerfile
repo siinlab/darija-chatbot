@@ -32,7 +32,7 @@ COPY ./models ./models
 COPY ./API ./API
 COPY ./UI ./UI
 COPY ./.dvc ./.dvc
-COPY git init
+RUN git init
 
 # Set up the DVC remote
 ARG CDN_API_KEY

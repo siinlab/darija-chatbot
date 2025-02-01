@@ -12,7 +12,7 @@ apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
     nvtop htop vim git-lfs ffmpeg libsox-dev tree parallel screen
 
 # Install git-lfs
-git lfs install
+# git lfs install
 
 # unset the extraheader for github.com 
-git config --unset-all http.https://github.com/.extraheader
+# git config --unset-all http.https://github.com/.extraheader

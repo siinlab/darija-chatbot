@@ -15,7 +15,7 @@ jobs:
 
     if: >
       github.event_name == 'issue_comment' &&
-      contains(github.event.comment.body, '!bot build') &&
+      contains(github.event.comment.body, '@bot build') &&
       (github.event.issue.pull_request != null)
     steps:
       - name: Checkout repository

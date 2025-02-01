@@ -21,7 +21,7 @@ RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
 
 # Install dependencies
 COPY ./requirements*.txt .
-# RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt # && pip install --no-cache-dir -r requirements.txt
 
 
 # Copy the rest of the source code

@@ -1,32 +1,21 @@
----
-name: Build Docker Image
-
-permissions:
-  contents: read
+name: Manual Trigger with Branch Selection
 
 on:
-  issue_comment:
-    types:
-      - created
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build Docker image from'
+        required: true
+        default: 'main'
 
 jobs:
-  build:
-    runs-on: third
-
-    if: >
-      github.event_name == 'issue_comment' &&
-      contains(github.event.comment.body, '@bot2 build') &&
-      (github.event.issue.pull_request != null)
+  builddd:
+    runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: Checkout code from the selected branch
         uses: actions/checkout@v3
         with:
-          fetch-depth: 1
-          ref: refs/pull/${{ github.event.issue.number }}/head
-      - name: Print current branch
-        run: echo "${{ github.event.issue.number }}" && git branch
-      - name: Get branch name
-        id: branch_name
-        run: echo "branch=$(git rev-parse --abbrev-ref HEAD)" >> $GITHUB_ENV
-      - name: Print source branch
-        run: echo "Source branch ${{ env.branch }}"
+          ref: ${{ github.event.inputs.branch }}  # Use the selected branch
+
+      - name: Deploy
+        run: echo "Deploying from branch ${{ github.event.inputs.branch }}"

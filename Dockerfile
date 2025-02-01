@@ -32,6 +32,7 @@ COPY ./models ./models
 COPY ./API ./API
 COPY ./UI ./UI
 COPY ./.dvc ./.dvc
+COPY ./.git ./.git
 
 # Set up the DVC remote
 ARG CDN_API_KEY

@@ -31,7 +31,7 @@ COPY ./data ./data
 COPY ./models ./models
 COPY ./API ./API
 COPY ./UI ./UI
-COPY ./.dvc ./.dvc
+COPY ./.dvc/config ./.dvc/config
 COPY ./.git ./.git
 
 # Set up the DVC remote

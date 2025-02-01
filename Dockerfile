@@ -5,38 +5,36 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]
 
+# Set up the DVC remote
+ARG CDN_API_KEY
+
+# Set the working directory
 WORKDIR /app
 
 # Copy the source code
 COPY ./scripts ./scripts
 
-# Setup environment
-RUN bash scripts/setup.sh && bash scripts/install-pyenv.sh && apt-get clean && rm -rf /var/lib/apt/lists/*
-
-# Set up pyenv in the shell
-ENV PYENV_ROOT="/root/.pyenv"
-ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"
-RUN echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
+# Setup environment and pyenv in a single layer
+RUN bash scripts/setup.sh && \
+    bash scripts/install-pyenv.sh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo 'export PYENV_ROOT="/root/.pyenv"' >> ~/.bashrc && \
+    echo 'export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
     echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 
-# Install dependencies
+# Install Python dependencies
 COPY ./requirements*.txt .
-RUN pip install --no-cache-dir -r requirements-dev.txt # && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache-dir -r requirements.txt
 
-
-# Copy the rest of the source code
-COPY ./tools ./tools
-COPY ./dataset ./dataset
-COPY ./data ./data
-COPY ./models ./models
-COPY ./API ./API
-COPY ./UI ./UI
-COPY ./.dvc ./.dvc
-RUN git init
-
-# Set up the DVC remote
-ARG CDN_API_KEY
+COPY ./dataset ./models ./.dvc ./
 
 # Pull files from the CDN
-RUN dvc remote modify --local bunny password "$CDN_API_KEY" && dvc pull -v && dvc remote modify --local bunny password "tmp"
+RUN git init && \
+    dvc remote modify --local bunny password "$CDN_API_KEY" && \
+    dvc pull -v && \
+    dvc remote remove --local bunny
 
+# Copy the rest of the source code
+COPY ./tools ./data ./API ./UI ./

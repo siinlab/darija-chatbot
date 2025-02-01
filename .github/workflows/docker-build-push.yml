@@ -8,50 +8,26 @@ on:
   push:
     branches:
       - 'main'
-    paths:
-      - 'models/**'
-      - 'Dockerfile'
-      - "dataset/**"
-      - "data/**"
-      - "scripts/**"
-      - "requirements.txt"
-      - "requirements-dev.txt"
 
 jobs:
-  build-push-image:
-    runs-on: second
+  deploy:
+    runs-on: third
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-
-      # Step 2: Extract branch name
-      - name: Get branch name
-        id: get_branch
-        run: |
-          BRANCH_NAME=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-')
-          echo "branch_name=$BRANCH_NAME" >> $GITHUB_ENV
-
-      # Step 3: Log in to GitHub Container Registry
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@9780b0c442fbb1117ed29e0efdff1e18412f7567
+      - name: Set up Docker Buildx
+        # yamllint disable-line
+        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.CONTAINER_REGISTRY_TOKEN }}
-
-      # Step 4: Build the Docker image with branch name tag
-      - name: Build Docker image
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
-          docker build -t $IMAGE_NAME . \
-            --build-arg CDN_API_KEY=${{ secrets.CDN_API_KEY }}
-
-      # Step 5: Push the Docker image to GitHub Container Registry
-      - name: Push Docker image
-        run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}:${{ env.branch_name }}
-          docker push $IMAGE_NAME
+          context: .
+          tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+          cache-from: type=gha,key=docker-build-cache
+          cache-to: type=gha,key=docker-build-cache,mode=max
+          build-args: |
+            CDN_API_KEY=${{ secrets.CDN_API_KEY }}
+          push: true

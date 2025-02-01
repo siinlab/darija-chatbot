@@ -1,5 +1,5 @@
 ---
-name: Build Docker Image
+name: Manual Docker Image Build
 
 permissions:
   contents: read

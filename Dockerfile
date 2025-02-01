@@ -32,11 +32,8 @@ COPY ./models ./models
 COPY ./API ./API
 COPY ./UI ./UI
 COPY ./.dvc ./.dvc
-RUN git init && \
-    git remote add origin https://github.com/siinlab/darija-tts.git && \
-    git fetch --depth 1 && \
-    git checkout main
-    
+COPY git init
+
 # Set up the DVC remote
 ARG CDN_API_KEY
 

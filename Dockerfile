@@ -39,6 +39,6 @@ ARG CDN_API_KEY
 
 # Pull files from the CDN
 RUN dvc remote modify --local bunny password "$CDN_API_KEY"
-RUN dvc pull -v
+RUN dvc pull --verbose --no-run-cache --jobs 16
 RUN dvc remote modify --local bunny password "tmp"
 

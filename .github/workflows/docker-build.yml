@@ -25,8 +25,8 @@ jobs:
           fetch-depth: 1
 
       - name: Set up Docker Buildx
-        uses: |
-          docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5
+        # yamllint disable-line
+        uses: docker/setup-buildx-action@6524bf65af31da8d45b59e8c27de4bd072b392f5 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:

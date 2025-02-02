@@ -33,18 +33,18 @@ RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache
 
 # Copy the DVC files
 COPY ./dataset ./dataset
-COPY ./models ./models
+COPY ./models/*/*.dvc ./models
+RUN tree -L 3
 COPY ./.dvc ./.dvc
 
-# Pull files from the CDN
-RUN git init && \
-    dvc remote modify --local bunny password "$CDN_API_KEY" && \
-    dvc pull && \
-    rm -rf .dvc/cache && \
-    dvc remote remove --local bunny
+# # Pull files from the CDN
+# RUN git init && \
+#     dvc remote modify --local bunny password "$CDN_API_KEY" && \
+#     dvc pull && \
+#     rm -rf .dvc/cache && \
+#     dvc remote remove --local bunny && \
+#     rm -rf .git
 
-# Copy the rest of the source code
-COPY ./tools ./tools
-COPY ./data ./data
-COPY ./API ./API
-COPY ./UI ./UI
+# # Copy the rest of the source code
+COPY . .
+RUN tree -L 3

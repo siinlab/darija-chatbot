@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-image:
-    runs-on: third
+    runs-on: big-runner
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -25,7 +25,7 @@ jobs:
         with:
           context: .
           tags: ghcr.io/${{github.repository}}:${{github.ref_name}}
-          cache-from: type=gha,key=docker-build-cache
-          cache-to: type=gha,key=docker-build-cache,mode=max
-          build-args: |
+          cache-from: type=gha
+          cache-to: type=gha,mode=min
+          secrets: |
             CDN_API_KEY=${{ secrets.CDN_API_KEY }}

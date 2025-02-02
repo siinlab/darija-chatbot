@@ -5,9 +5,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]
 
-# Set up the DVC remote
-ARG CDN_API_KEY
-
 # Set the working directory
 WORKDIR /app
 
@@ -29,21 +26,23 @@ ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"
     
 # Install Python dependencies
 COPY ./requirements*.txt .
-RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt -r requirements.txt
 
 # Copy the DVC files
-COPY ./dataset ./dataset
-COPY ./models ./models
 COPY ./.dvc ./.dvc
+COPY ./dataset ./dataset
+COPY ./models/tts/checkpoints-female.dvc ./models/tts/checkpoints-female.dvc
+COPY ./models/tts/checkpoints-male.dvc ./models/tts/checkpoints-male.dvc
+COPY ./models/whisper_asr/checkpoints.dvc ./models/whisper_asr/checkpoints.dvc
 
 # Pull files from the CDN
-RUN git init && \
-    dvc remote modify --local bunny password "$CDN_API_KEY" && \
+RUN --mount=type=secret,id=CDN_API_KEY \
+    git init && \
+    dvc remote modify --local bunny password "$(cat /run/secrets/CDN_API_KEY)" && \
     dvc pull && \
-    dvc remote remove --local bunny
+    dvc remote remove --local bunny && \
+    rm -rf .dvc/cache && \
+    rm -rf .git
 
 # Copy the rest of the source code
-COPY ./tools ./tools
-COPY ./data ./data
-COPY ./API ./API
-COPY ./UI ./UI
+COPY . .

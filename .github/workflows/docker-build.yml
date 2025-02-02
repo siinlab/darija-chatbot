@@ -11,7 +11,7 @@ on:
 
 jobs:
   build-image:
-    runs-on: big-runner
+    runs-on: second
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3

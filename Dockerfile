@@ -15,27 +15,28 @@ WORKDIR /app
 COPY ./scripts ./scripts
 
 # Setup environment and pyenv in a single layer
-RUN bash scripts/setup.sh && \
-    bash scripts/install-pyenv.sh && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    echo 'export PYENV_ROOT="/root/.pyenv"' >> ~/.bashrc && \
-    echo 'export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+# RUN bash scripts/setup.sh && \
+#     bash scripts/install-pyenv.sh && \
+#     apt-get clean && \
+#     rm -rf /var/lib/apt/lists/* && \
+#     echo 'export PYENV_ROOT="/root/.pyenv"' >> ~/.bashrc && \
+#     echo 'export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"' >> ~/.bashrc && \
+#     echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
+#     echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 
 ENV PYENV_ROOT="/root/.pyenv"
 ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"
     
 # Install Python dependencies
 COPY ./requirements*.txt .
-RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements-dev.txt -r requirements.txt
 
 # Copy the DVC files
-COPY ./dataset ./dataset
-COPY ./models/**/*.dvc ./models/
-RUN tree -L 3
 COPY ./.dvc ./.dvc
+COPY ./dataset ./dataset
+COPY ./models/tts/checkpoints-female.dvc ./models/tts/checkpoints-female.dvc
+COPY ./models/tts/checkpoints-male.dvc ./models/tts/checkpoints-male.dvc
+COPY ./models/whisper_asr/checkpoints.dvc ./models/whisper_asr/checkpoints.dvc
 
 # # Pull files from the CDN
 # RUN git init && \

@@ -15,14 +15,14 @@ WORKDIR /app
 COPY ./scripts ./scripts
 
 # Setup environment and pyenv in a single layer
-# RUN bash scripts/setup.sh && \
-#     bash scripts/install-pyenv.sh && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/* && \
-#     echo 'export PYENV_ROOT="/root/.pyenv"' >> ~/.bashrc && \
-#     echo 'export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"' >> ~/.bashrc && \
-#     echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
-#     echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
+RUN bash scripts/setup.sh && \
+    bash scripts/install-pyenv.sh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    echo 'export PYENV_ROOT="/root/.pyenv"' >> ~/.bashrc && \
+    echo 'export PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
+    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc
 
 ENV PYENV_ROOT="/root/.pyenv"
 ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"

@@ -5,9 +5,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 SHELL ["/bin/bash", "-c"]
 
-# Set up the DVC remote
-ARG CDN_API_KEY
-
 # Set the working directory
 WORKDIR /app
 

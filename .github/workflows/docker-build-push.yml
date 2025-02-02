@@ -11,7 +11,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: second
+    runs-on: big-runner
 
     steps:
       - name: Checkout repository

@@ -34,6 +34,6 @@ jobs:
           tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
           cache-from: type=gha
           cache-to: type=gha,mode=min
-          build-args: |
+          secrets: |
             CDN_API_KEY=${{ secrets.CDN_API_KEY }}
           push: true

@@ -39,8 +39,9 @@ COPY ./models/tts/checkpoints-male.dvc ./models/tts/checkpoints-male.dvc
 COPY ./models/whisper_asr/checkpoints.dvc ./models/whisper_asr/checkpoints.dvc
 
 # Pull files from the CDN
-RUN git init && \
-    dvc remote modify --local bunny password "$CDN_API_KEY" && \
+RUN --mount=type=secret,id=CDN_API_KEY \
+    git init && \
+    dvc remote modify --local bunny password "$(cat /run/secrets/CDN_API_KEY)" && \
     dvc pull && \
     dvc remote remove --local bunny && \
     rm -rf .dvc/cache && \

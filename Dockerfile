@@ -48,4 +48,4 @@ COPY ./models/whisper_asr/checkpoints.dvc ./models/whisper_asr/checkpoints.dvc
 
 # # Copy the rest of the source code
 COPY . .
-RUN tree -L 3
+RUN tree -a -L 3

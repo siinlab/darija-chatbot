@@ -33,7 +33,7 @@ RUN pip install --no-cache-dir -r requirements-dev.txt && pip install --no-cache
 
 # Copy the DVC files
 COPY ./dataset ./dataset
-COPY ./models/*/*.dvc ./models
+COPY ./models/**/*.dvc ./models/
 RUN tree -L 3
 COPY ./.dvc ./.dvc
 

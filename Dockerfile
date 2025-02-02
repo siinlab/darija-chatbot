@@ -39,7 +39,7 @@ COPY ./.dvc ./.dvc
 # Pull files from the CDN
 RUN git init && \
     dvc remote modify --local bunny password "$CDN_API_KEY" && \
-    dvc pull && \
+    # dvc pull && \
     dvc remote remove --local bunny
 
 # Copy the rest of the source code

@@ -29,7 +29,7 @@ ENV PATH="$PYENV_ROOT/bin:$PYENV_ROOT/shims:$PYENV_ROOT/versions:$PATH"
     
 # Install Python dependencies
 COPY ./requirements*.txt .
-# RUN pip install --no-cache-dir -r requirements-dev.txt -r requirements.txt
+RUN pip install --no-cache-dir -r requirements-dev.txt -r requirements.txt
 
 # Copy the DVC files
 COPY ./.dvc ./.dvc
@@ -38,14 +38,13 @@ COPY ./models/tts/checkpoints-female.dvc ./models/tts/checkpoints-female.dvc
 COPY ./models/tts/checkpoints-male.dvc ./models/tts/checkpoints-male.dvc
 COPY ./models/whisper_asr/checkpoints.dvc ./models/whisper_asr/checkpoints.dvc
 
-# # Pull files from the CDN
-# RUN git init && \
-#     dvc remote modify --local bunny password "$CDN_API_KEY" && \
-#     dvc pull && \
-#     rm -rf .dvc/cache && \
-#     dvc remote remove --local bunny && \
-#     rm -rf .git
+# Pull files from the CDN
+RUN git init && \
+    dvc remote modify --local bunny password "$CDN_API_KEY" && \
+    dvc pull && \
+    dvc remote remove --local bunny && \
+    rm -rf .dvc/cache && \
+    rm -rf .git
 
-# # Copy the rest of the source code
+# Copy the rest of the source code
 COPY . .
-RUN tree -a -L 3

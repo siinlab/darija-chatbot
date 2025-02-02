@@ -24,7 +24,7 @@ jobs:
         uses: docker/build-push-action@ca877d9245402d1537745e0e356eab47c3520991
         with:
           context: .
-          tags: ghcr.io/${{github.repository}}:${{github.ref_name}}
+          tags: ghcr.io/${{github.repository}}:main
           cache-from: type=gha
           cache-to: type=gha,mode=min
           secrets: |

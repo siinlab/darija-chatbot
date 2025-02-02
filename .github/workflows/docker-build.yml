@@ -25,7 +25,7 @@ jobs:
         with:
           context: .
           tags: ghcr.io/${{github.repository}}:main
-          cache-from: type=gha
-          cache-to: type=gha,mode=min
+          cache-from: type=gha,scope=global
+          cache-to: type=gha,mode=max,scope=global
           secrets: |
             CDN_API_KEY=${{ secrets.CDN_API_KEY }}

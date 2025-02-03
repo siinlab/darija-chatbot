@@ -40,10 +40,6 @@ async def handle_incoming_request(
 		form = await request.form()
 		for file_key in form:
 			for uploaded_file in form.getlist(file_key):
-				if uploaded_file.content_type != "audio/wav":
-					continue
-				if uploaded_file.size > 20 * 1024 * 1024:
-					continue
 				_file_path = file_path.with_suffix(".request.wav")
 				with _file_path.open("wb") as file:
 					file.write(await uploaded_file.read())

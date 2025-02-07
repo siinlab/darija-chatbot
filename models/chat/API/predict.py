@@ -31,4 +31,9 @@ def predict(messages: list, prompt: str | None = None) -> str:
 		max_tokens=512,
 		messages=messages,
 	)
-	return message.content[0].text
+	text = message.content[0].text
+	# replace duplicate "\n" with single "\n"
+	text = "\n".join(line for line in text.split("\n") if line.strip())
+	# replace duplicate '"' with single '"'
+	text = '"'.join(line for line in text.split('"') if line.strip())
+	return text  # noqa: RET504

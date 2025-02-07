@@ -4,7 +4,7 @@
 [![Docker Image Build](https://github.com/siinlab/darija-tts/actions/workflows/docker-build.yml/badge.svg)](https://github.com/siinlab/darija-tts/actions/workflows/docker-build.yml)
 [![Build and Push Docker Image to GitHub Container Registry](https://github.com/siinlab/darija-tts/actions/workflows/docker-build-push.yml/badge.svg?branch=main)](https://github.com/siinlab/darija-tts/actions/workflows/docker-build-push.yml)
 
-> Before using this repository, please read the [License](#license) and [Disclaimer](#disclaimer) sections below.
+> Before using this repository, please read the [License](#license) and [Terms of Use](#terms-of-use) sections below.
 
 ## Project Overview
 
@@ -80,7 +80,7 @@ To finetune the ASR model, please checkout the files in the [models/whisper_asr]
 This project is licensed under the AGPL-3.0 license. For more details, please refer to the [LICENSE](./LICENSE) file.
 
 
-## Disclaimer
+## Terms of Use
 
 This repository is provided for educational and research purposes only. The author(s) and contributors of this project are not responsible for any misuse, unintended consequences, or unethical applications of the code, datasets, or trained models provided herein. 
 
@@ -90,3 +90,24 @@ By using this repository, you agree that:
 - You acknowledge that the maintainers and contributors assume no liability for any direct or indirect damage resulting from the use of this repository.
 
 If you do not agree with these terms, you must refrain from using this repository.
+
+## Citation
+
+If you use this repository in your research or work, please cite it as follows:
+
+```
+@misc{darija-tts,
+  author = {Siin Lab},
+  title = {Moroccan Darija TTS},
+  year = {2024},
+  publisher = {GitHub},
+  journal = {GitHub repository},
+  howpublished = {\url{https://github.com/siinlab/darija-tts}}
+}
+```
+
+## Credits
+
+This project makes use of source code borrowed from the following repositories:
+- [nipponjo/tts-arabic-pytorch](https://github.com/nipponjo/tts-arabic-pytorch)
+- [Huzaifa7524/Whisper_small_openai_finetuned_on_arabic_language](https://github.com/Huzaifa7524/Whisper_small_openai_finetuned_on_arabic_language)

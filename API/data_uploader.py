@@ -13,6 +13,11 @@ from lgg import logger
 # define variable to choose whether to collect data or not
 COLLECT_DATA = True
 
+if COLLECT_DATA:
+	logger.info("Data collection is enabled.")
+else:
+	logger.info("Data collection is disabled.")
+
 # get the storage URL and API key from the environment
 STORAGE_URL = environ.get("STORAGE_URL", None)
 STORAGE_API_KEY = environ.get("STORAGE_API_KEY", None)
@@ -41,6 +46,7 @@ def enqueue_file_upload(file_path: Path) -> None:
 		file_path (Path): The path to the file to be uploaded.
 	"""
 	if not COLLECT_DATA:
+		logger.info("Data collection is disabled. Deleting file...")
 		# delete the file_path
 		file_path.unlink()
 		return
@@ -55,6 +61,7 @@ def _upload_worker() -> None:
 	"""Worker that continuously processes file uploads from the queue."""
 	logger.info("Upload worker started.")
 	while True:
+		logger.info("Waiting for file to upload...")
 		file_path = _upload_queue.get()
 		if file_path is None:  # option to exit worker
 			break
@@ -78,7 +85,7 @@ def _upload_file(file_path: Path) -> None:
 	Args:
 		file_path (str): The path to the file to upload.
 	"""
-	logger.debug(f"Uploading file: {file_path}")
+	logger.info(f"Uploading file: {file_path}")
 	try:
 		# check if the file exists
 		if not file_path.exists():
@@ -100,7 +107,7 @@ def _upload_file(file_path: Path) -> None:
 		with file_path.open("rb") as file_data:
 			response = requests.put(url, headers=headers, data=file_data, timeout=5)
 			response.raise_for_status()
-		logger.debug(f"File uploaded successfully to {url}")
+		logger.info(f"File uploaded successfully to {url}")
 	except Exception as e:  # noqa: BLE001
 		logger.error(f"Failed to upload file to storage due to: {e}")
 	finally:

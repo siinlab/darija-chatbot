@@ -15,6 +15,7 @@ class Message(BaseModel):  # noqa: D101
 
 class Dialog(BaseModel):  # noqa: D101
 	messages: list[Message]
+	prompt: str = None
 
 
 @router.post("/chat")
@@ -34,7 +35,9 @@ def respond_to_dialog(dialog: Dialog) -> str:
 	"""
 	try:
 		# convert dialog to python dict
-		messages = dialog.model_dump()["messages"]
-		return predict(messages)
+		dialog = dialog.model_dump()
+		messages = dialog["messages"]
+		prompt = dialog.get("prompt", None)
+		return predict(messages, prompt)
 	except Exception as e:  # noqa: BLE001
 		raise HTTPException(status_code=500, detail=str(e))  # noqa: B904

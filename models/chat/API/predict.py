@@ -13,7 +13,7 @@ client = anthropic.Anthropic(
 DEFAUTL_PROMPT = "انا كندوي بالدارجة و بغيت تبقى تجاوبني بها و بغيتك تبقى تجاوبني بلا حروف لاتينية و بلا ارقام:\n"  # noqa: E501
 
 
-def predict(messages: list, prompt: str = DEFAUTL_PROMPT) -> str:
+def predict(messages: list, prompt: str | None = None) -> str:
 	"""Respond to messages using the Claude model.
 
 	Args:
@@ -23,6 +23,8 @@ def predict(messages: list, prompt: str = DEFAUTL_PROMPT) -> str:
 	Returns:
 		str: The response text from the Claude model.
 	"""
+	if prompt is None:
+		prompt = DEFAUTL_PROMPT
 	messages[0]["content"] = prompt + messages[0]["content"]
 	message = client.messages.create(
 		model="claude-3-5-sonnet-20241022",

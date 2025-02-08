@@ -27,7 +27,7 @@ def predict(messages: list, prompt: str | None = None) -> str:
 		prompt = DEFAUTL_PROMPT
 	messages[0]["content"] = prompt + messages[0]["content"]
 	message = client.messages.create(
-		model="claude-3-5-sonnet-20241022",
+		model="claude-3-5-haiku-20241022",
 		max_tokens=512,
 		messages=messages,
 	)

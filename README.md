@@ -77,8 +77,9 @@ To finetune the ASR model, please checkout the files in the [models/whisper_asr]
 
 ## License
 
-This project is licensed under the AGPL-3.0 license. For more details, please refer to the [LICENSE](./LICENSE) file.
+This project is licensed under the AGPL-3.0 license and for research-only purposes. For more details, please refer to the [LICENSE](./LICENSE) file.
 
+For commercial use, please contact us at contact@siinlab.com to obtain a commercial license.
 
 ## Terms of Use
 

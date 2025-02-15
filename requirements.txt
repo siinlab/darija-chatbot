@@ -19,3 +19,4 @@ python-multipart
 streamlit
 statsmodels
 anthropic
+sentence-transformers

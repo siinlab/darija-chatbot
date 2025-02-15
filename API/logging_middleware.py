@@ -28,7 +28,7 @@ async def handle_incoming_request(
 	cached_body: bytes,
 ) -> None:
 	"""Handle incoming request logging."""
-	if path in ["/generate", "/chat"]:
+	if path in ["/generate", "/chat", "/embedding"]:
 		body = json.loads(cached_body or b"{}")
 		request_data = json.dumps(body, indent=4, ensure_ascii=False)
 		_file_path = file_path.with_suffix(".request.json")

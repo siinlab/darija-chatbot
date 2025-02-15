@@ -2,21 +2,25 @@
 
 from fastapi import APIRouter, HTTPException
 
-from .predict import predict  # noqa: F401
+from .predict import predict
 from .utils import EmbeddingRequest
 
 router = APIRouter(prefix="/embedding")
 
 
 @router.post("/")
-def compute_embedding(texts: EmbeddingRequest) -> bytes:  # noqa: ARG001
+def compute_embedding(texts_list: EmbeddingRequest) -> bytes:
 	"""Transcribes the given audio file(s) using a pre-trained model.
 
 	Args:
-		texts (EmbeddingRequest): A list of texts.
+		texts_list (EmbeddingRequest): A list of texts.
 
+	Returns:
+		bytes: The embeddings of the input texts.
 	"""
 	try:
-		pass
+		texts = texts_list.texts
+		embeddings = predict(texts)
+		return embeddings.tobytes()
 	except Exception as e:  # noqa: BLE001
 		raise HTTPException(status_code=500, detail=str(e))  # noqa: B904

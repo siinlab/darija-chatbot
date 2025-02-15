@@ -20,6 +20,4 @@ def predict(texts: list[str]) -> np.ndarray:
 		np.ndarray: The embeddings of the input texts.
 	"""
 	logger.debug(f"Computing the embeddings of {len(texts)} input texts.")
-	result = _model.encode(texts)
-
-	return result  # noqa: RET504
+	return _model.encode(texts)

@@ -1,4 +1,4 @@
-# Moroccan Darija TTS
+# Moroccan Darija Chatbot
 
 [![Python Lint](https://github.com/siinlab/darija-tts/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/siinlab/darija-tts/actions/workflows/linter.yml)
 [![Docker Image Build](https://github.com/siinlab/darija-tts/actions/workflows/docker-build.yml/badge.svg)](https://github.com/siinlab/darija-tts/actions/workflows/docker-build.yml)
@@ -8,7 +8,7 @@
 
 ## Project Overview
 
-This project includes several components to facilitate the development and usage of a Moroccan Darija TTS system:
+This project includes several components to facilitate the development and usage of a Moroccan Darija Chatbot system:
 
 ### Datasets
 The project provides curated datasets necessary for training the TTS models. These datasets include audio recordings and their corresponding transcriptions in Moroccan Darija.
@@ -44,6 +44,7 @@ From within the Docker container, run these commands to set up the TTS system:
 ```bash
 bash models/scripts/setup-tts.sh
 bash models/scripts/setup-whisper-asr.sh
+bash models/scripts/setup-embedding.sh
 ```
 
 Once you have set up the dependencies, you can use the trained models through the API and/or UI. Moreover, you can re-train the models on your own dataset using the provided scripts.

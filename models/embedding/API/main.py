@@ -1,6 +1,9 @@
 """Main API module for the Whisper ASR."""
 
-from fastapi import APIRouter, HTTPException
+from io import BytesIO
+
+import numpy as np
+from fastapi import APIRouter, HTTPException, Response
 
 from .predict import predict
 from .utils import EmbeddingRequest
@@ -21,6 +24,10 @@ def compute_embedding(texts_list: EmbeddingRequest) -> bytes:
 	try:
 		texts = texts_list.texts
 		embeddings = predict(texts)
-		return embeddings.tobytes()
+		# Preserve the array shape by saving the array with np.save
+		buf = BytesIO()
+		np.save(buf, embeddings)
+		buf.seek(0)
+		return Response(content=buf.getvalue(), media_type="application/octet-stream")
 	except Exception as e:  # noqa: BLE001
 		raise HTTPException(status_code=500, detail=str(e))  # noqa: B904

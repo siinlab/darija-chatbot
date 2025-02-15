@@ -11,4 +11,4 @@ apt-get install -y make build-essential libssl-dev zlib1g-dev libbz2-dev \
     xz-utils tk-dev libffi-dev liblzma-dev python3-openssl git portaudio19-dev \
     nvtop htop vim git-lfs ffmpeg libsox-dev tree parallel screen
 
-git config --unset-all http.https://github.com/.extraheader
+# git config --unset-all http.https://github.com/.extraheader

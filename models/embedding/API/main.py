@@ -11,7 +11,7 @@ from .utils import EmbeddingRequest
 router = APIRouter(prefix="/embedding")
 
 
-@router.post("/")
+@router.post("")
 def compute_embedding(texts_list: EmbeddingRequest) -> bytes:
 	"""Transcribes the given audio file(s) using a pre-trained model.
 

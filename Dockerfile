@@ -1,5 +1,5 @@
 FROM ubuntu:22.04
-LABEL org.opencontainers.image.source="https://github.com/siinlab/darija-tts"
+LABEL org.opencontainers.image.source="https://github.com/siinlab/darija-chatbot"
 
 ENV DEBIAN_FRONTEND=noninteractive
 

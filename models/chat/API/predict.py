@@ -10,7 +10,7 @@ client = anthropic.Anthropic(
 	api_key=ANTHROPIC_API_KEY,
 )
 
-DEFAUTL_PROMPT = "انا كندوي بالدارجة و بغيت تبقى تجاوبني بها و بغيتك تبقى تجاوبني بلا حروف لاتينية و بلا ارقام:\n"  # noqa: E501
+DEFAUTL_PROMPT = "انا كندوي بالدارجة و بغيت تبقى تجاوبني بها و بغيتك تبقى تجاوبني بلا حروف لاتينية و بلا ارقام"  # noqa: E501
 
 
 def predict(messages: list, prompt: str | None = None) -> str:
@@ -25,10 +25,10 @@ def predict(messages: list, prompt: str | None = None) -> str:
 	"""
 	if prompt is None:
 		prompt = DEFAUTL_PROMPT
-	messages[0]["content"] = prompt + messages[0]["content"]
 	message = client.messages.create(
 		model="claude-3-5-haiku-20241022",
 		max_tokens=512,
+		system=prompt,
 		messages=messages,
 	)
 	text = message.content[0].text

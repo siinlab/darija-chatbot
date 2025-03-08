@@ -9,7 +9,6 @@ from shutil import rmtree
 
 import pandas as pd
 from audio.amplitude import (
-	analyze_amplitude_trend,
 	compute_silence_proportions,
 	compute_snr_ratio,
 )
@@ -33,6 +32,8 @@ from text.analysis import (
 	words_length_distribution,
 	words_number,
 )
+
+logger.setLevel("INFO")
 
 if __name__ == "__main__":
 	freeze_support()
@@ -151,9 +152,6 @@ if __name__ == "__main__":
 	silence_proporations, duration = zip(*silence_proporations_and_duration)  # noqa: B905
 	# Compute SNR ratio for audio files
 	snr_ratios = compute_snr_ratio(audio_files)
-	# Analyze amplitude trend for audio files
-	amplitude_trends = analyze_amplitude_trend(audio_files)
-	bias, slope, mean = zip(*amplitude_trends)  # noqa: B905
 	# Compute number of digits per caption
 	digits_per_caption = dataframe["caption"].apply(
 		lambda x: sum(char.isdigit() for char in x),
@@ -178,9 +176,6 @@ if __name__ == "__main__":
 	dataframe.loc[:, "silence"] = silence_proporations
 	dataframe.loc[:, "duration"] = duration
 	dataframe.loc[:, "snr"] = snr_ratios
-	dataframe.loc[:, "bias"] = bias
-	dataframe.loc[:, "slope"] = slope
-	dataframe.loc[:, "mean"] = mean
 	dataframe.loc[:, "digits"] = digits_per_caption
 	dataframe.loc[:, "non_arabic"] = non_arabic_characters
 	# Compute caption length

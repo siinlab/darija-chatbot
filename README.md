@@ -42,8 +42,8 @@ From within the Docker container, run these commands to set up the TTS system:
 
 ```bash
 bash models/scripts/setup-tts.sh
-bash models/scripts/setup-whisper-asr.sh
 bash models/scripts/setup-embedding.sh
+bash models/scripts/setup-whisper-asr.sh
 ```
 
 Once you have set up the dependencies, you can use the trained models through the API and/or UI. Moreover, you can re-train the models on your own dataset using the provided scripts.
@@ -62,13 +62,15 @@ bash API/start_api.sh
 
 ### UI
 
-After API has been started, you can run the UI using the following command:
+After API has been started, you can run the UI using the following command (make sure the API is kept running):
 
 ```bash
 bash UI/start_ui.sh
 ```
 
 ### Finetuning
+
+> For more details, please refer to the documents in the [docs](docs) folder.
 
 Currently, this repository provides scripts to finetune the TTS and ASR models.   
 To finetune the TTS model, please checkout the files in the [models/tts](models/tts/src) folder.   

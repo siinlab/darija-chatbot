@@ -33,5 +33,4 @@ RUN --mount=type=secret,id=CDN_API_KEY \
     dvc pull && \
     dvc remote remove --local bunny && \
     rm -rf .dvc/cache && \
-    bash dataset/unzip-dataset-archives.sh && \
-    rm -rf dataset/*.zip
+    bash dataset/unzip-dataset-archives.sh

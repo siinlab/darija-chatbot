@@ -8,5 +8,5 @@ for file in *.zip; do
     unzip -q "$file"
 
     # remove the zip file
-    # rm "$file"
+    rm "$file"
 done

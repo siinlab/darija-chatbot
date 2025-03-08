@@ -52,10 +52,10 @@ class AudioDownloader:  # noqa: D101
 
                     out_file = video.download(output_path=self.output_dir)
 
-                    # Convert to wav format
+                    # Convert to mp3 format
                     audio = audiosegment.from_file(path=out_file)
-                    new_file = os.path.join(self.output_dir, f"{video_id}.wav")  # noqa: PTH118
-                    audio.export(new_file, format="wav")
+                    new_file = os.path.join(self.output_dir, f"{video_id}.mp3")  # noqa: PTH118
+                    audio.export(new_file, format="mp3")
                     audio_paths.append(new_file)
 
                     os.remove(out_file)  # noqa: PTH107
@@ -120,7 +120,7 @@ class AudioDownloader:  # noqa: D101
 
 if __name__ == "__main__":
     downloader = AudioDownloader(output_dir="./raw-data")
-    playlist_url = "https://www.youtube.com/playlist?list=PLxt59R_fWVzT9bDxA76AHm3ig0Gg9S3So"
+    playlist_url = "https://www.youtube.com/playlist?list=PLqDxnEgiB7q3oEOy1mVqf6vt137G55eqY"
 
     video_urls = downloader.get_videos_from_playlist(playlist_url)
     video_ids = downloader.extract_youtube_video_ids(video_urls)

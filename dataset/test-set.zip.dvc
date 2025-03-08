@@ -1,0 +1,5 @@
+outs:
+- md5: f6ecce61c8c7a54a84ba6a1462590e3a
+  size: 345369318
+  hash: md5
+  path: test-set.zip

@@ -60,6 +60,12 @@ parser.add_argument(
 	help="Learning rate for the optimizer",
 )
 parser.add_argument(
+	"--weight_decay",
+	type=float,
+	default=1e-3,
+	help="Weight decay for the optimizer",
+)
+parser.add_argument(
 	"--warmup_steps",
 	type=int,
 	default=500,
@@ -139,17 +145,11 @@ processor = WhisperProcessor.from_pretrained(
 )
 # Load Whisper config
 config = WhisperConfig.from_pretrained(whisper_version)
-# overwrite the default values
-config.forced_decoder_ids = None
-config.max_length = args.generation_max_length
-config.max_target_positions = args.generation_max_length
-config.suppress_tokens = []
 # Load the model
 feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version)
 model = WhisperForConditionalGeneration.from_pretrained(
 	whisper_version,
 	config=config,
-	ignore_mismatched_sizes=True,
 )
 
 # check if the data directory exists
@@ -270,7 +270,7 @@ training_args = Seq2SeqTrainingArguments(
 	per_device_train_batch_size=args.per_device_train_batch_size,
 	gradient_accumulation_steps=args.gradient_accumulation_steps,
 	learning_rate=args.learning_rate,
-	weight_decay=1e-3,
+	weight_decay=args.weight_decay,
 	warmup_steps=args.warmup_steps,
 	max_steps=args.max_steps,
 	fp16=args.fp16,

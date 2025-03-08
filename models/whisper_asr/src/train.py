@@ -14,6 +14,7 @@ from lgg import logger
 from transformers import (
 	Seq2SeqTrainer,
 	Seq2SeqTrainingArguments,
+	WhisperConfig,
 	WhisperFeatureExtractor,
 	WhisperForConditionalGeneration,
 	WhisperProcessor,
@@ -21,7 +22,7 @@ from transformers import (
 )
 
 # get number of physical CPU cores
-num_cores = max(psutil.cpu_count(logical=False) // 2, 16)
+num_cores = min(psutil.cpu_count(logical=False) // 2, 16)
 
 parser = argparse.ArgumentParser(
 	description="Train the Whisper model on the Arabic ASR task.",
@@ -136,10 +137,20 @@ processor = WhisperProcessor.from_pretrained(
 	language="Arabic",
 	task="transcribe",
 )
+# Load Whisper config
+config = WhisperConfig.from_pretrained(whisper_version)
+# overwrite the default values
+config.forced_decoder_ids = None
+config.max_length = args.generation_max_length
+config.max_target_positions = args.generation_max_length
+config.suppress_tokens = []
+# Load the model
 feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version)
-model = WhisperForConditionalGeneration.from_pretrained(whisper_version)
-model.config.forced_decoder_ids = None
-model.config.suppress_tokens = []
+model = WhisperForConditionalGeneration.from_pretrained(
+	whisper_version,
+	config=config,
+	ignore_mismatched_sizes=True,
+)
 
 # check if the data directory exists
 if not data_dir.exists():
@@ -259,7 +270,7 @@ training_args = Seq2SeqTrainingArguments(
 	per_device_train_batch_size=args.per_device_train_batch_size,
 	gradient_accumulation_steps=args.gradient_accumulation_steps,
 	learning_rate=args.learning_rate,
-    weight_decay=1e-3,
+	weight_decay=1e-3,
 	warmup_steps=args.warmup_steps,
 	max_steps=args.max_steps,
 	fp16=args.fp16,

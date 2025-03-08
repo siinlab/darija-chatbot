@@ -3,6 +3,7 @@
 import argparse
 from pathlib import Path
 
+import librosa
 from lgg import logger
 from transformers import pipeline
 
@@ -47,6 +48,12 @@ for audio in audios:
 
 logger.info(f"Found {len(audio_paths)} audio files")
 
+# drop audios with duration > 30 seconds
+audio_paths = [
+	audio_path
+	for audio_path in audio_paths
+	if librosa.load(audio_path, sr=16000)[0].shape[0] < 30 * 16000
+]
 
 # Evaluate the model on the audio files
 result = model([audio_path.as_posix() for audio_path in audio_paths])

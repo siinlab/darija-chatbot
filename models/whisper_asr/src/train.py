@@ -23,6 +23,7 @@ from transformers import (
 
 # get number of physical CPU cores
 num_cores = min(psutil.cpu_count(logical=False) // 2, 16)
+logger.info(f"Using {num_cores=}")
 
 parser = argparse.ArgumentParser(
 	description="Train the Whisper model on the Arabic ASR task.",

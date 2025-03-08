@@ -8,5 +8,5 @@ for dir in */; do
     zip -q -r "${dir%/}.zip" "$dir"
 
     # remove the folder
-    # rm -rf "$dir"
+    rm -rf "$dir"
 done

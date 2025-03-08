@@ -2,17 +2,18 @@
 
 CRITERIA = {
 	"silence": {  # percentages
-		"max": 80,
+		"max": 70,
 	},
 	"duration": {  # seconds
 		"min": 1,
-		"max": 20,
+		"max": 29,
 	},
 	"length": {  # characters
 		"min": 2,
+		"max": 1000,
 	},
 	"snr": {  # decibels
-		"min": -5,
+		"min": -11,
 	},
 	"bias": {  # amplitude
 		"min": 0.03,
@@ -25,7 +26,7 @@ CRITERIA = {
 	},
 	"duration_length_ratio": {  # seconds/character
 		"min": 0.05,
-		"max": 0.15,
+		"max": 0.25,
 	},
 	"digits": {  # number of digits
 		"max": 0,

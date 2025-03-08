@@ -12,7 +12,7 @@ from lgg import logger
 from transformers import WhisperFeatureExtractor, WhisperTokenizer
 
 # get number of physical CPU cores
-num_cores = psutil.cpu_count(logical=False) // 2
+num_cores = min(psutil.cpu_count(logical=False) // 4, 8)
 
 parser = argparse.ArgumentParser(description="Prepare data for training")
 parser.add_argument("--data-dir", type=str, required=True, help="data directory")
@@ -35,7 +35,7 @@ tokenizer = WhisperTokenizer.from_pretrained(
 	language="Arabic",
 	task="transcribe",
 )
-feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version, device=0)
+feature_extractor = WhisperFeatureExtractor.from_pretrained(whisper_version)
 
 # read the output directory
 output_dir = output_path.parent
@@ -116,6 +116,7 @@ def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
 	batch["input_features"] = feature_extractor(
 		audio["array"],
 		sampling_rate=audio["sampling_rate"],
+        device="cuda",
 	).input_features[0]
 
 	# encode target text to label ids

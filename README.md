@@ -1,7 +1,6 @@
 # Moroccan Darija Chatbot
 
 [![Python Lint](https://github.com/siinlab/darija-tts/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/siinlab/darija-tts/actions/workflows/linter.yml)
-[![Docker Image Build](https://github.com/siinlab/darija-tts/actions/workflows/docker-build.yml/badge.svg)](https://github.com/siinlab/darija-tts/actions/workflows/docker-build.yml)
 [![Build and Push Docker Image to GitHub Container Registry](https://github.com/siinlab/darija-tts/actions/workflows/docker-build-push.yml/badge.svg?branch=main)](https://github.com/siinlab/darija-tts/actions/workflows/docker-build-push.yml)
 
 > Before using this repository, please read the [License](#license) and [Terms of Use](#terms-of-use) sections below.

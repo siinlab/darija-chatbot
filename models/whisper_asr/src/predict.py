@@ -92,10 +92,11 @@ for i, res in enumerate(result):
 
 # save results to a csv file: audio,caption
 output_dir = Path(args.output_dir).resolve()
+audios_dir = output_dir / "audios"
 # create the output directory if it doesn't exist
-if not output_dir.exists():
-	logger.debug(f"Output directory {output_dir} doesn't exist. Creating it.")
-	output_dir.mkdir(parents=True, exist_ok=False)
+if not audios_dir.exists():
+	logger.debug(f"Output directory {audios_dir} doesn't exist. Creating it.")
+	audios_dir.mkdir(parents=True, exist_ok=False)
 new_audio_filenames = [
 	f"{audio_path.parent.name}-{audio_path.name}" for audio_path in audio_paths
 ]
@@ -110,4 +111,6 @@ dataframe.to_csv(output_file, index=False)
 
 # copy the audio files to the output directory
 for audio_path, audio_filename in zip(audio_paths, new_audio_filenames, strict=False):
-	copyfile(audio_path, output_dir / audio_filename)
+	copyfile(audio_path, audios_dir / audio_filename)
+
+logger.info(f"Results saved to {output_dir}")

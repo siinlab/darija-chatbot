@@ -21,6 +21,8 @@ from transformers import (
 	WhisperTokenizer,
 )
 
+logger.setLevel("DEBUG")
+
 # get number of physical CPU cores
 num_cores = min(psutil.cpu_count(logical=False) // 2, 16)
 logger.info(f"Using {num_cores=}")
@@ -162,6 +164,15 @@ if not data_dir.exists():
 if not output_dir.exists():
 	logger.debug(f"Output directory {output_dir} doesn't exist. Creating it.")
 	output_dir.mkdir(parents=True, exist_ok=False)
+else:
+	logger.debug(f"Output directory {output_dir} already exists.")
+	# append an index to the output directory
+	for i in range(1, 101):
+		output_dir = output_dir.with_name(output_dir.name + f"-{i:02d}")
+		if not output_dir.exists():
+			logger.debug(f"Creating output directory {output_dir}")
+			output_dir.mkdir(parents=True, exist_ok=False)
+			break
 
 
 @dataclass

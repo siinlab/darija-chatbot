@@ -11,6 +11,8 @@ from datasets import Dataset, load_dataset
 from lgg import logger
 from transformers import WhisperFeatureExtractor, WhisperTokenizer
 
+logger.setLevel("DEBUG")
+
 # get number of physical CPU cores
 num_cores = min(psutil.cpu_count(logical=False) // 4, 8)
 
@@ -24,6 +26,9 @@ parser.add_argument(
 	help="Whisper model version",
 )
 args = parser.parse_args()
+
+# Define a constant for the maximum label length
+MAX_LABEL_LENGTH = 448
 
 data_dir = Path(args.data_dir)
 output_path = Path(args.output_path)
@@ -91,7 +96,7 @@ def load_audio_data(csv_path: Path, audios_dir: Path) -> Dataset:
 
 	dataset = load_dataset("csv", data_files=csv_path.as_posix())
 
-	return dataset.map(process_example, remove_columns=["caption"])
+	return dataset.map(process_example, remove_columns=["caption"], num_proc=num_cores)
 
 
 def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
@@ -128,8 +133,18 @@ def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
 logger.info(f"Loading audio data from {csv_files[0]} and {audios_dir}")
 dataset = load_audio_data(csv_path=csv_files[0], audios_dir=audios_dir)
 
+# limit the dataset size for testing to only 10 samples
+# dataset["train"] = dataset['train'].select(range(10))  # noqa: ERA001
+
 # Preprocess the dataset
 dataset = dataset.map(prepare_dataset, num_proc=num_cores)
+
+# drop samples with len(labels) >= 448
+dataset = dataset.filter(
+	lambda x: len(x["labels"]) <= MAX_LABEL_LENGTH,
+	num_proc=num_cores,
+	batched=False,
+)
 
 # print datset overview
 logger.info(f"Dataset overview:\n{dataset}")

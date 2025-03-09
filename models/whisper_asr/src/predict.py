@@ -1,7 +1,9 @@
 """Evaluate the Whisper model on few Arabic audios."""
 
 import argparse
+import random
 from pathlib import Path
+from shutil import copyfile
 
 import librosa
 import pandas as pd
@@ -27,10 +29,17 @@ parser.add_argument(
 	help="path to the model checkpoint",
 )
 parser.add_argument(
-	"--output-file",
+	"--output-dir",
 	type=str,
-	default="./results.csv",
-	help="path to the output file",
+	default=".",
+	help="path to the output directory where the results will be saved",
+)
+parser.add_argument(
+	"--num-samples",
+	type=int,
+	default=10,
+	help="Number of audios to use for prediction."
+	"The audios are randomly sampled from the dataset.",
 )
 
 args = parser.parse_args()
@@ -48,8 +57,8 @@ for audio in audios:
 	audio_path = Path(audio)
 	# if audio_path is a directory, then get all mp3 and wav files
 	if audio_path.is_dir():
-		audio_paths.extend(audio_path.glob("*.mp3"))
-		audio_paths.extend(audio_path.glob("*.wav"))
+		audio_paths.extend(audio_path.rglob("**/*.mp3"))
+		audio_paths.extend(audio_path.rglob("**/*.wav"))
 	else:
 		audio_paths.append(audio_path)
 
@@ -64,6 +73,15 @@ audio_paths = [
 
 logger.info(f"Found {len(audio_paths)} audio files with duration < 30 seconds")
 
+# Randomly sample num_samples audios
+if len(audio_paths) > args.num_samples:
+	audio_paths = random.sample(audio_paths, args.num_samples)
+
+logger.info(f"Using {len(audio_paths)} audio files for prediction")
+
+# sort the audio paths for reproducibility
+audio_paths = sorted(audio_paths)
+
 # Evaluate the model on the audio files
 result = model([audio_path.as_posix() for audio_path in audio_paths])
 
@@ -73,16 +91,23 @@ for i, res in enumerate(result):
 	logger.info(f"Transcription: {res['text']}")
 
 # save results to a csv file: audio,caption
-output_file = Path(args.output_file).resolve()
+output_dir = Path(args.output_dir).resolve()
 # create the output directory if it doesn't exist
-if not output_file.parent.exists():
-	logger.debug(f"Output directory {output_file.parent} doesn't exist. Creating it.")
-	output_file.parent.mkdir(parents=True, exist_ok=False)
+if not output_dir.exists():
+	logger.debug(f"Output directory {output_dir} doesn't exist. Creating it.")
+	output_dir.mkdir(parents=True, exist_ok=False)
+new_audio_filenames = [
+	f"{audio_path.parent.name}-{audio_path.name}" for audio_path in audio_paths
+]
 dataframe = pd.DataFrame(
 	{
-		"audio": [audio_path.as_posix() for audio_path in audio_paths],
+		"audio": new_audio_filenames,
 		"caption": [res["text"] for res in result],
 	},
 )
-
+output_file = output_dir / "data.csv"
 dataframe.to_csv(output_file, index=False)
+
+# copy the audio files to the output directory
+for audio_path, audio_filename in zip(audio_paths, new_audio_filenames, strict=False):
+	copyfile(audio_path, output_dir / audio_filename)

@@ -166,9 +166,10 @@ if not output_dir.exists():
 	output_dir.mkdir(parents=True, exist_ok=False)
 else:
 	logger.debug(f"Output directory {output_dir} already exists.")
+	dir_name = output_dir.name
 	# append an index to the output directory
 	for i in range(1, 101):
-		output_dir = output_dir.with_name(output_dir.name + f"-{i:02d}")
+		output_dir = output_dir.with_name(dir_name + f"-{i:02d}")
 		if not output_dir.exists():
 			logger.debug(f"Creating output directory {output_dir}")
 			output_dir.mkdir(parents=True, exist_ok=False)

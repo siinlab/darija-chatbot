@@ -55,7 +55,7 @@ def split_audio_on_silence(
 			input_audio_path,
 			output_dir,
 			silence_thresh - 5,
-			min_silence_len + 50,
+			min_silence_len + 70,
 			keep_silence,
 		)
 		return
@@ -64,7 +64,7 @@ def split_audio_on_silence(
 		split_audio_on_silence(
 			input_audio_path,
 			output_dir,
-			silence_thresh + 5,
+			silence_thresh + 7,
 			min_silence_len - 50,
 			keep_silence,
 		)

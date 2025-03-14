@@ -111,7 +111,7 @@ if fresh_start:
 	logger.info(f"Found {len(audio_paths)} audio files with duration < 30 seconds")
 
 	# Randomly sample num_samples audios
-	if len(audio_paths) > args.num_samples:
+	if args.num_samples > 0 and len(audio_paths) > args.num_samples:
 		audio_paths = random.sample(audio_paths, args.num_samples)
 else:
 	# load audio_paths from the audios_dir

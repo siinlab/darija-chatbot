@@ -34,8 +34,12 @@ import shutil
 from pathlib import Path
 
 import pandas as pd
+from joblib import Parallel, delayed
 from lgg import logger
 from pydub import AudioSegment
+from tqdm import tqdm
+
+logger.setLevel("DEBUG")
 
 
 def _load_datasets(root_dir: Path) -> list[dict[str, str]]:
@@ -50,7 +54,7 @@ def _load_datasets(root_dir: Path) -> list[dict[str, str]]:
 	root_path = Path(root_dir)
 	data = []
 
-	for dataset_folder in root_path.iterdir():
+	for dataset_folder in tqdm(root_path.iterdir(), desc="Loading datasets"):
 		if not dataset_folder.is_dir():
 			continue
 
@@ -67,7 +71,11 @@ def _load_datasets(root_dir: Path) -> list[dict[str, str]]:
 			dataframe = pd.read_csv(csv_path, sep=";")
 
 		for _, row in dataframe.iterrows():
-			audio_path = audio_dir / row["audio"]
+			try:
+				audio_path = audio_dir / row["audio"]
+			except Exception as e:  # noqa: BLE001
+				logger.warning(f"Failed to load audio file: {e}")
+				continue
 			if audio_path.exists():
 				data.append({"audio": audio_path, "caption": row["caption"]})
 
@@ -95,17 +103,14 @@ def _generate_augmented_dataset(
 		msg = "Not enough audio files to merge."
 		raise ValueError(msg)
 
-	if output_dir.exists():
-		logger.warning(f"Removing the existing output directory {output_dir}")
-		shutil.rmtree(output_dir)
-
 	output_audio_path = output_dir / "audios"
 	csv_file = output_dir / "data.csv"
 	output_audio_path.mkdir(exist_ok=True, parents=True)
 
 	new_entries = []
 
-	for i in range(num_augmented_samples):
+	def process_sample(i: int):  # noqa: ANN202
+		logger.debug(f"Generating augmented sample {i}.")
 		num_audios_to_merge = random.randint(2, max_num_audios_to_merge)  # noqa: S311
 		selected_files = random.sample(data, num_audios_to_merge)
 		merged_audio = AudioSegment.empty()
@@ -122,12 +127,19 @@ def _generate_augmented_dataset(
 		# Trim merged transcript
 		merged_transcript = merged_transcript.strip()
 
-		new_filename = f"merged_{i}.wav"
+		extension = selected_files[0]["audio"].suffix
+		new_filename = f"merged_{i}{extension}"
 		new_audio_path = output_audio_path / new_filename
-		merged_audio.export(new_audio_path, format="wav")
+		merged_audio.export(new_audio_path, format=extension.lstrip("."))
 
-		new_entries.append({"filename": new_filename, "transcript": merged_transcript})
+		return {"audio": new_filename, "caption": merged_transcript}
 
+	logger.info(f"Generating {num_augmented_samples} augmented samples.")
+	new_entries = Parallel(n_jobs=8)(
+		delayed(process_sample)(i) for i in range(num_augmented_samples)
+	)
+
+	logger.info("Saving augmented CSV file to disk.")
 	new_df = pd.DataFrame(new_entries)
 	new_df.to_csv(csv_file, index=False)
 
@@ -150,7 +162,13 @@ def augment_dataset(
 		silence_duration (int): Silence duration (ms) between merged audios.
 		num_augmented_samples (int): Number of augmented samples to generate.
 	"""
+	# Delete the existing output directory if it exists
+	if output_dir.exists():
+		logger.warning(f"Removing the existing output directory {output_dir}")
+		shutil.rmtree(output_dir)
+	# Load datasets and generate augmented dataset
 	data = _load_datasets(root_dir)
+	# Generate augmented dataset
 	_generate_augmented_dataset(
 		data,
 		output_dir,

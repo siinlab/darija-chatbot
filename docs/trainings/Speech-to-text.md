@@ -29,17 +29,14 @@ bash prepate-data.sh
 To train the Speech-to-Text model, you can run the following command:
 
 ```bash
-cd models/whisper_asr/src
 bash train.sh
 ```
 
 ## Model prediction
 
-To transcribe test audios using the trained model, you can run the following command:
+To transcribe test audios using a trained model, you can run the following command:
 
 ```bash
-cd models/whisper_asr/checkpoints
-cp checkpoint-XXXX/* . # copy the content of the checkpoint directory you want to test to the current directory
-cd ../src
-bash predict.sh
+bash predict.sh <checkpoint_dir>
 ```
+Where `<checkpoint_dir>` is the directory containing the model checkpoint, for eg. `../checkpoints-01/checkpoints-1000`.

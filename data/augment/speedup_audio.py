@@ -102,7 +102,10 @@ def _generate_augmented_dataset(
 			min_speed,
 			max_speed,
 		)  # Pick a random speed-up factor
-		augmented_audio = _speed_up_audio(audio, speed_factor)
+		try:
+			augmented_audio = _speed_up_audio(audio, speed_factor)
+		except Exception:  # noqa: BLE001
+			return process_sample(i)  # Retry if an error occurs
 
 		extension = item["audio"].suffix
 		new_filename = f"sped_up_{i}{extension}"

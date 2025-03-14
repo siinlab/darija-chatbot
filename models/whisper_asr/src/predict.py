@@ -6,6 +6,7 @@ import shutil
 from pathlib import Path
 from shutil import copyfile
 
+import joblib
 import librosa
 import pandas as pd
 from lgg import logger
@@ -91,11 +92,21 @@ if fresh_start:
 	logger.info(f"Found {len(audio_paths)} audio files")
 
 	# drop audios with durtion > 30 seconds
-	audio_paths = [
-		audio_path
-		for audio_path in audio_paths
-		if librosa.load(audio_path, sr=16000)[0].shape[0] < 30 * 16000
-	]
+	def filter_audio(audio_path):  # noqa: ANN001, ANN201, D103
+		try:
+			return (
+				audio_path
+				if librosa.load(audio_path, sr=16000)[0].shape[0] < 30 * 16000
+				else None
+			)
+		except Exception as e:  # noqa: BLE001
+			logger.warning(f"Error processing {audio_path}: {e}")
+			return None
+
+	audio_paths = joblib.Parallel(n_jobs=-1)(
+		joblib.delayed(filter_audio)(audio_path) for audio_path in audio_paths
+	)
+	audio_paths = [audio_path for audio_path in audio_paths if audio_path]
 
 	logger.info(f"Found {len(audio_paths)} audio files with duration < 30 seconds")
 

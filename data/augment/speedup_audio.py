@@ -71,9 +71,9 @@ def _speed_up_audio(audio: AudioSegment, speed_factor: float) -> AudioSegment:
 def _generate_augmented_dataset(
 	data: list[dict[str, str]],
 	output_dir: Path,
-	min_speed: float = 1.1,
-	max_speed: float = 1.5,
-	num_augmented_samples: int = 1000,
+	min_speed: float,
+	max_speed: float,
+	num_augmented_samples: int,
 ) -> None:
 	"""Generates an augmented dataset by speeding up audio files.
 
@@ -126,9 +126,9 @@ def _generate_augmented_dataset(
 def augment_dataset(
 	root_dir: Path,
 	output_dir: Path,
-	min_speed: float = 1.1,
-	max_speed: float = 1.5,
-	num_augmented_samples: int = 1000,
+	min_speed: float,
+	max_speed: float,
+	num_augmented_samples: int,
 ) -> None:
 	"""Generates an augmented dataset by speeding up audio files.
 

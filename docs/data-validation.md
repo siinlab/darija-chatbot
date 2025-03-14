@@ -36,8 +36,21 @@ bash scripts/run-data-filter.sh
 
 The script will overwrite all `data.csv` files in the `dataset` directory with the filtered data. The filtering process is based on the criteria defined in the [data/filter/criteria.py](data/filter/criteria.py) file. You can customize the criteria to suit your needs.
 
+## Data augmentation
+
+Data augmentation is a technique used to increase the size of the training dataset by applying transformations to the data. It's a common practice in machine learning to improve the model's performance and generalization.
+
+For the **Speech-to-Text** model, you can apply the following transformations:
+* Concatenate multiple audio files
+* Speed up audio files
+
+To apply data augmentation, you can run the following command:
+
+```bash
+bash scripts/run-data-augmentation.sh
+```
+
 ## TODO
 
 Among the tasks that need to be done in the future are the following:
 * Clean the text data: for eg. replace digits with alphabets, etc.
-* Implement a data augmentation pipeline: for eg. changing the speed of the audio, etc.

@@ -2,9 +2,11 @@
 
 import argparse
 import random
+import shutil
 from pathlib import Path
 from shutil import copyfile
 
+import joblib
 import librosa
 import pandas as pd
 from lgg import logger
@@ -41,11 +43,35 @@ parser.add_argument(
 	help="Number of audios to use for prediction."
 	"The audios are randomly sampled from the dataset.",
 )
+parser.add_argument(
+	"--fresh-start",
+	action="store_true",
+	help="If True, then start the prediction from scratch, ie. don't use the existing results.",  # noqa: E501
+)
 
 args = parser.parse_args()
 
 audios = args.audios
 model = args.model
+fresh_start = args.fresh_start
+
+output_dir = Path(args.output_dir).resolve()
+audios_dir = output_dir / "audios"
+csv_file = output_dir / "data.csv"
+
+if fresh_start:
+	logger.info(f"Removing the existing output directory {output_dir}")
+	shutil.rmtree(output_dir, ignore_errors=True)
+else:
+	logger.info(
+		f"Using the existing output directory {output_dir} "
+		"including the audios and data.csv",
+	)
+# create the output directory if it doesn't exist
+if not audios_dir.exists():
+	fresh_start = True  # if the directory doesn't exist, then start over
+	logger.debug(f"Output directory {audios_dir} doesn't exist. Creating it.")
+	audios_dir.mkdir(parents=True, exist_ok=False)
 
 # Load the model
 logger.info(f"Loading model from {model}")
@@ -53,29 +79,43 @@ model = pipeline(model=model, task="automatic-speech-recognition", device=0)
 
 # Load the audio files
 audio_paths = []
-for audio in audios:
-	audio_path = Path(audio)
-	# if audio_path is a directory, then get all mp3 and wav files
-	if audio_path.is_dir():
-		audio_paths.extend(audio_path.rglob("**/*.mp3"))
-		audio_paths.extend(audio_path.rglob("**/*.wav"))
-	else:
-		audio_paths.append(audio_path)
+if fresh_start:
+	for audio in audios:
+		audio_path = Path(audio)
+		# if audio_path is a directory, then get all mp3 and wav files
+		if audio_path.is_dir():
+			audio_paths.extend(audio_path.rglob("**/*.mp3"))
+			audio_paths.extend(audio_path.rglob("**/*.wav"))
+		else:
+			audio_paths.append(audio_path)
 
-logger.info(f"Found {len(audio_paths)} audio files")
+	logger.info(f"Found {len(audio_paths)} audio files")
 
-# drop audios with durtion > 30 seconds
-audio_paths = [
-	audio_path
-	for audio_path in audio_paths
-	if librosa.load(audio_path, sr=16000)[0].shape[0] < 30 * 16000
-]
+	# drop audios with durtion > 30 seconds
+	def filter_audio(audio_path):  # noqa: ANN001, ANN201, D103
+		try:
+			return (
+				audio_path
+				if librosa.load(audio_path, sr=16000)[0].shape[0] < 30 * 16000
+				else None
+			)
+		except Exception as e:  # noqa: BLE001
+			logger.warning(f"Error processing {audio_path}: {e}")
+			return None
 
-logger.info(f"Found {len(audio_paths)} audio files with duration < 30 seconds")
+	audio_paths = joblib.Parallel(n_jobs=-1)(
+		joblib.delayed(filter_audio)(audio_path) for audio_path in audio_paths
+	)
+	audio_paths = [audio_path for audio_path in audio_paths if audio_path]
 
-# Randomly sample num_samples audios
-if len(audio_paths) > args.num_samples:
-	audio_paths = random.sample(audio_paths, args.num_samples)
+	logger.info(f"Found {len(audio_paths)} audio files with duration < 30 seconds")
+
+	# Randomly sample num_samples audios
+	if args.num_samples > 0 and len(audio_paths) > args.num_samples:
+		audio_paths = random.sample(audio_paths, args.num_samples)
+else:
+	# load audio_paths from the audios_dir
+	audio_paths = list(audios_dir.rglob("*"))
 
 logger.info(f"Using {len(audio_paths)} audio files for prediction")
 
@@ -91,26 +131,34 @@ for i, res in enumerate(result):
 	logger.info(f"Transcription: {res['text']}")
 
 # save results to a csv file: audio,caption
-output_dir = Path(args.output_dir).resolve()
-audios_dir = output_dir / "audios"
-# create the output directory if it doesn't exist
-if not audios_dir.exists():
-	logger.debug(f"Output directory {audios_dir} doesn't exist. Creating it.")
-	audios_dir.mkdir(parents=True, exist_ok=False)
 new_audio_filenames = [
 	f"{audio_path.parent.name}-{audio_path.name}" for audio_path in audio_paths
 ]
-dataframe = pd.DataFrame(
-	{
-		"audio": new_audio_filenames,
-		"caption": [res["text"] for res in result],
-	},
-)
-output_file = output_dir / "data.csv"
-dataframe.to_csv(output_file, index=False)
+if fresh_start:
+	logger.info("Creating a new dataframe with columns 'audio' and 'caption-1'")
+	dataframe = pd.DataFrame(
+		{
+			"audio": new_audio_filenames,
+			"caption-1": [res["text"] for res in result],
+		},
+	)
+else:
+	dataframe = pd.read_csv(csv_file)
+	num_columns = len(dataframe.columns)
+	dataframe[f"caption-{num_columns}"] = [res["text"] for res in result]
+	logger.info(f"Saving new captions in the column 'caption-{num_columns}'")
+
+# save the dataframe to a csv file
+dataframe.to_csv(csv_file, index=False)
 
 # copy the audio files to the output directory
-for audio_path, audio_filename in zip(audio_paths, new_audio_filenames, strict=False):
-	copyfile(audio_path, audios_dir / audio_filename)
+if fresh_start:
+	logger.info(f"Copying audio files to {audios_dir}")
+	for audio_path, audio_filename in zip(
+		audio_paths,
+		new_audio_filenames,
+		strict=False,
+	):
+		copyfile(audio_path, audios_dir / audio_filename)
 
 logger.info(f"Results saved to {output_dir}")

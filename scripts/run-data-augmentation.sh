@@ -15,10 +15,10 @@ cd "$root_dir/data/augment"
 python speedup_audio.py "$datasets_dir" "$spedup_audios_dataset_dir" \
     --min_speed 1.1 \
     --max_speed 1.5 \
-    --num_augmented_samples 1000
+    --num_augmented_samples 5000
 
 # Concat audio files
 python concat_audios.py "$datasets_dir" "$concat_audios_dataset_dir" \
-    --max_num_audios_to_merge 3 \
+    --max_num_audios_to_merge 4 \
     --silence_duration 200 \
-    --num_augmented_samples 1000
+    --num_augmented_samples 5000

@@ -60,7 +60,11 @@ def _load_datasets(root_dir: Path) -> list[dict[str, str]]:
 		if not audio_dir.exists() or not csv_path.exists():
 			continue  # Skip invalid datasets
 
-		dataframe = pd.read_csv(csv_path)
+		try:
+			dataframe = pd.read_csv(csv_path)
+		except pd.errors.ParserError:
+			logger.warning(f"Failed to load {csv_path}. Trying with ';' separator.")
+			dataframe = pd.read_csv(csv_path, sep=";")
 
 		for _, row in dataframe.iterrows():
 			audio_path = audio_dir / row["audio"]

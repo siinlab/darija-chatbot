@@ -7,9 +7,10 @@ from typing import Any
 
 import librosa
 import psutil
-from datasets import Dataset, load_dataset
 from lgg import logger
 from transformers import WhisperFeatureExtractor, WhisperTokenizer
+
+from datasets import Dataset, load_dataset
 
 logger.setLevel("DEBUG")
 

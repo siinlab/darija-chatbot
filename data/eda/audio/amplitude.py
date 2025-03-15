@@ -97,7 +97,7 @@ def compute_silence_proportions(audio_paths: list[str]) -> list[tuple[float, flo
 	Returns:
 		list[tuple[float, float]]: List of tuples containing silence percentage and total duration.
 	"""  # noqa: E501
-	return Parallel(n_jobs=-1, backend="multiprocessing")(
+	return Parallel(n_jobs=8, backend="multiprocessing")(
 		delayed(_compute_silence_proportion)(path) for path in audio_paths
 	)
 
@@ -112,7 +112,7 @@ def analyze_amplitude_trend(audio_paths: list[str]) -> list[tuple[float, float]]
 	Returns:
 		list[tuple[float, float]]: List of tuples containing bias and slope.
 	"""
-	return Parallel(n_jobs=-1, backend="multiprocessing")(
+	return Parallel(n_jobs=8, backend="multiprocessing")(
 		delayed(_analyze_amplitude_trend)(path) for path in audio_paths
 	)
 
@@ -127,6 +127,6 @@ def compute_snr_ratio(audio_paths: list[str]) -> list[float]:
 	Returns:
 		list[float]: List of SNR ratios.
 	"""
-	return Parallel(n_jobs=-1, backend="multiprocessing")(
+	return Parallel(n_jobs=8, backend="multiprocessing")(
 		delayed(_compute_snr_ratio)(path) for path in audio_paths
 	)

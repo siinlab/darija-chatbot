@@ -9,7 +9,6 @@ from typing import Any
 import evaluate
 import psutil
 import torch
-from datasets import DatasetDict, load_from_disk
 from lgg import logger
 from transformers import (
 	Seq2SeqTrainer,
@@ -20,6 +19,8 @@ from transformers import (
 	WhisperProcessor,
 	WhisperTokenizer,
 )
+
+from datasets import DatasetDict, load_from_disk
 
 logger.setLevel("DEBUG")
 

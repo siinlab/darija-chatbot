@@ -5,10 +5,10 @@ set -e
 cd "$(dirname "$0")"
 
 src_dir=$(pwd)
-datasets_dir="$src_dir/../../../dataset"
-all_datasets_dir="$src_dir/../../../dataset/all-datasets"
+datasets_dir="$src_dir/../../../datasets/whisper-dataset"
+all_datasets_dir="$src_dir/../../../datasets/whisper-all-datasets"
+hf_dataset_path="$src_dir/../../../datasets/whisper-all-datasets-hf"
 tools_dir="$src_dir/../../../tools/dataset"
-hf_dataset_path="$src_dir/../../../dataset/all-datasets-hf"
 
 # Delete all-datasets directory if exists
 if [ -d "$all_datasets_dir" ]; then

@@ -1,4 +1,9 @@
-dataset/*/
+datasets/**/*/
+datasets/**/*
+!datasets/**/
+!datasets/**/*.dvc
+!datasets/**/*.sh
+!datasets/**/.gitignore
 config.yaml
 tmp
 .DS_Store

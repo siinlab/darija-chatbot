@@ -1,0 +1,5 @@
+outs:
+- md5: 04e63c95c4ad3dda5774ac4d7810effd
+  size: 3970320575
+  hash: md5
+  path: whisper-dataset.tar.gz

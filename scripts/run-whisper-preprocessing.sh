@@ -20,8 +20,8 @@ if [ "$raw_dataset_size" -lt 1000000 ]; then
     echo "Error: datasets/raw-dataset/ directory is empty or too small."
     exit 1
 fi
-
 whisper_dataset_dir=$(realpath "./datasets/whisper-dataset")
+rm -rf "$whisper_dataset_dir" ./runs/whisper-data 2>/dev/null || true
 mkdir -p "./runs/whisper-data"
 runs_dir=$(realpath "./runs/whisper-data")
 

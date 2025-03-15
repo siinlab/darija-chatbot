@@ -116,6 +116,7 @@ def is_digit(char: str) -> bool:
 	"""
 	return char.isdigit()
 
+
 def is_space(char: str) -> bool:
 	"""Check if a character is a white space.
 
@@ -140,11 +141,12 @@ def is_symbol(char: str) -> bool:
 	Returns:
 		bool: True if the character is a symbol, False otherwise.
 	"""
-	return not (is_alphabet(char) or is_punctuation(char) or is_digit(char) \
-             or is_space(char))
+	return not (
+		is_alphabet(char) or is_punctuation(char) or is_digit(char) or is_space(char)
+	)
 
 
-def split_to_words(text : str) -> list[str]:
+def split_to_words(text: str) -> list[str]:
 	"""Split a text into a list of words.
 
 	Args:
@@ -156,7 +158,7 @@ def split_to_words(text : str) -> list[str]:
 	return list(text.split())
 
 
-def split_to_sentences(text : str) -> list[str]:
+def split_to_sentences(text: str) -> list[str]:
 	"""Split a text into a list of sentences.
 
 	Args:
@@ -168,7 +170,7 @@ def split_to_sentences(text : str) -> list[str]:
 	return text.split(".")
 
 
-def split_to_paragraphs(text : str) -> list[str]:
+def split_to_paragraphs(text: str) -> list[str]:
 	"""Split a text into a list of paragraphs.
 
 	Args:
@@ -180,7 +182,7 @@ def split_to_paragraphs(text : str) -> list[str]:
 	return text.split("\n")
 
 
-def parallel_sum(lst: list[any], condition_fn : callable) -> int:
+def parallel_sum(lst: list[any], condition_fn: callable) -> int:
 	"""Calculate the sum of elements in a list that satisfy a given condition function.
 
 	Args:
@@ -190,7 +192,8 @@ def parallel_sum(lst: list[any], condition_fn : callable) -> int:
 	Returns:
 		int: The sum of elements that satisfy the filter function.
 	"""
-	def process_chunk(chunk : list[any]) -> int:
+
+	def process_chunk(chunk: list[any]) -> int:
 		return sum(1 for x in chunk if condition_fn(x))
 
 	step = len(lst) // NUMBER_OF_CONCURRENT_JOBS
@@ -200,14 +203,16 @@ def parallel_sum(lst: list[any], condition_fn : callable) -> int:
 	]
 
 	# Compute sub-results
-	results = Parallel(n_jobs=-1)(delayed(process_chunk)(chunk) for chunk in chunks)
+	results = Parallel(n_jobs=8)(delayed(process_chunk)(chunk) for chunk in chunks)
 
 	# Combine the results
 	return sum(results)
 
 
-def parallel_distribution(lst: list[any], map_fn: Callable | None = None) \
-    -> OrderedDict:
+def parallel_distribution(
+	lst: list[any],
+	map_fn: Callable | None = None,
+) -> OrderedDict:
 	"""Calculate the distribution of elements in a list.
 
 	Args:
@@ -217,7 +222,8 @@ def parallel_distribution(lst: list[any], map_fn: Callable | None = None) \
 	Returns:
 		OrderedDict: The distribution of elements.
 	"""
-	def process_chunk(chunk : list[any]) -> Counter:
+
+	def process_chunk(chunk: list[any]) -> Counter:
 		if map_fn is not None:
 			chunk = [map_fn(x) for x in chunk]
 		return Counter(chunk)
@@ -238,8 +244,7 @@ def parallel_distribution(lst: list[any], map_fn: Callable | None = None) \
 	]
 
 	# Compute sub-results
-	results = Parallel(n_jobs=-1)(delayed(process_chunk)(chunk) for chunk in chunks)
+	results = Parallel(n_jobs=8)(delayed(process_chunk)(chunk) for chunk in chunks)
 
 	# Aggregate the results
 	return aggregate_results(results)
-

@@ -1,5 +1,8 @@
-dataset
-dataset/*/
+datasets/**/*/
+datasets/**/*
+!datasets/**/
+!datasets/**/*.dvc
+!datasets/**/*.sh
 config.yaml
 tmp
 .DS_Store

@@ -22,6 +22,7 @@ if [ "$raw_dataset_size" -lt 1000000 ]; then
 fi
 
 whisper_dataset_dir=$(realpath "./datasets/whisper-dataset")
+mkdir -p "./runs/whisper-data"
 runs_dir=$(realpath "./runs/whisper-data")
 
 # copy datasets/raw-dataset/ to datasets/whisper-dataset/

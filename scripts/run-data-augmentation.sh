@@ -13,10 +13,11 @@ if [ ! -d "$1" ]; then
     exit 1
 fi
 
+datasets_dir=$(realpath "$1")
+
 # change working directory to the project root directory
 cd "$(dirname "$0")/.."
 root_dir=$(pwd)
-datasets_dir="$root_dir/dataset"
 concat_audios_dataset_dir="$datasets_dir/concat_audios"
 spedup_audios_dataset_dir="$datasets_dir/spedup_audios"
 

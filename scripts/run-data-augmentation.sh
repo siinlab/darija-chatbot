@@ -1,6 +1,18 @@
 #!/bin/bash
 set -e
 
+# read one argument from the user: datasets folder
+if [ "$#" -ne 1 ]; then
+    echo "Usage: bash $0 <datasets-folder>"
+    exit 1
+fi
+
+# check if the datasets folder exists
+if [ ! -d "$1" ]; then
+    echo "Error: Datasets folder does not exist."
+    exit 1
+fi
+
 # change working directory to the project root directory
 cd "$(dirname "$0")/.."
 root_dir=$(pwd)
@@ -21,4 +33,4 @@ python speedup_audio.py "$datasets_dir" "$spedup_audios_dataset_dir" \
 python concat_audios.py "$datasets_dir" "$concat_audios_dataset_dir" \
     --max_num_audios_to_merge 4 \
     --silence_duration 200 \
-    --num_augmented_samples 5000
+    --num_augmented_samples 10000

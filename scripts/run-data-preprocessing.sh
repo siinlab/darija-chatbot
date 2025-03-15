@@ -8,6 +8,13 @@ scripts_dir=$(pwd)
 
 cd ..
 
+# check if dataset/ directory exists
+if [ -d "dataset/" ]; then
+    echo "dataset/ directory already exists. Please remove it before running this script."
+    exit 1
+fi
+
+# copy raw dataset to dataset/ directory
 echo "Copying raw dataset to dataset/ directory..."
 cp -r raw-dataset/ dataset/
 

@@ -29,8 +29,5 @@ RUN pip install --no-cache-dir -r requirements-dev.txt -r requirements.txt
 
 # Pull files from the CDN
 RUN --mount=type=secret,id=CDN_API_KEY \
-    dvc remote modify --local bunny password "$(cat /run/secrets/CDN_API_KEY)" && \
-    dvc pull && \
-    dvc remote remove --local bunny && \
-    rm -rf .dvc/cache && \
-    bash dataset/unzip-dataset-archives.sh
+    dvc remote modify --local bunny password "$(cat /run/secrets/CDN_API_KEY)"
+#    dvc pull && dvc remote remove --local bunny && rm -rf .dvc/cache && bash dataset/unzip-dataset-archives.sh

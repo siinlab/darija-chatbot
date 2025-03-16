@@ -33,7 +33,7 @@ whisper_version = args.whisper_version
 logger.setLevel("DEBUG")
 
 # Get the number of physical CPU cores
-num_cores = psutil.cpu_count(logical=False)
+num_cores = psutil.cpu_count(logical=False) - 4
 # Disable HF caching mechanism
 disable_caching()
 

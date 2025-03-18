@@ -19,10 +19,10 @@ ckpts_dir=$(dirname "$ckpt_dir")
 cp "$ckpt_dir"/* "$ckpts_dir" || true
 
 src_dir=$(pwd)
-audios_dir="$src_dir/../../../dataset/.test-dataset/audios/"
+audios_dir="$src_dir/../../../datasets/test-dataset/audios/"
 
 python "$src_dir/predict.py" \
     --model "$ckpts_dir" \
     --audios "$audios_dir" \
-    --num-samples 10 \
+    --num-samples 500 \
     --output-dir "$src_dir/../prediction-results/"

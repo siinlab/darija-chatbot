@@ -10,7 +10,6 @@ from pathlib import Path
 from typing import Any
 
 import librosa
-import psutil
 from lgg import logger
 from transformers import WhisperFeatureExtractor, WhisperTokenizerFast
 
@@ -32,14 +31,13 @@ whisper_version = args.whisper_version
 
 logger.setLevel("DEBUG")
 
-# Get the number of physical CPU cores
-num_cores = psutil.cpu_count(logical=False) - 4
 # Disable HF caching mechanism
 disable_caching()
 
 # Define a constant for the maximum label length
 MAX_LABEL_LENGTH = 448
 BATCH_SIZE = 16  # Adjust based on memory availability
+NUM_CORES = 16  # Adjust based on CPU availability
 
 # Load Whisper tokenizer and feature extractor
 tokenizer = WhisperTokenizerFast.from_pretrained(
@@ -86,7 +84,7 @@ def load_audio_data(csv_path: Path, audios_dir: Path) -> Dataset:
 
 	dataset = load_dataset("csv", data_files=csv_path.as_posix(), keep_in_memory=False)
 	# dataset["train"] = dataset["train"].select(range(10000))  # noqa: ERA001
-	return dataset.map(process_example, remove_columns=["caption"], num_proc=num_cores)
+	return dataset.map(process_example, remove_columns=["caption"], num_proc=NUM_CORES)
 
 
 def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
@@ -121,7 +119,7 @@ dataset = dataset.map(prepare_dataset, batched=True, batch_size=BATCH_SIZE, num_
 # Filter out samples with long labels in batches
 dataset = dataset.filter(
 	lambda x: len(x["labels"]) <= MAX_LABEL_LENGTH,
-	num_proc=num_cores,
+	num_proc=NUM_CORES,
 	batched=False,
 )
 
@@ -130,4 +128,4 @@ logger.info(f"Dataset overview:\n{dataset}")
 
 # Save dataset to output path
 logger.info(f"Saving dataset to {output_path}")
-dataset.save_to_disk(output_path.as_posix(), num_proc=num_cores)
+dataset.save_to_disk(output_path.as_posix(), num_proc=NUM_CORES)

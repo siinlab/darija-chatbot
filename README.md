@@ -26,7 +26,7 @@ A user-friendly interface is available to quickly test the TTS model. This UI al
 
 ## Environment
 
-This repository has a rebuilt Docker image that contains all the necessary dependencies to run the TTS system. To pull the Docker image, use the following command:
+This repository has a pre-built Docker image that contains all the necessary dependencies to run the TTS system. To pull the Docker image, use the following command:
 
 ```bash
 docker pull ghcr.io/siinlab/darija-tts:main
@@ -56,9 +56,6 @@ To run the API, use the following commands:
 export ANTHROPIC_API_KEY=<your-api-key> # set it to an empty string ("") if you don't need the chat functionality.
 bash API/start_api.sh
 ```
-
-> By detault the API will try to collect the data it receives in each request and upload it to a server to help train an improved model. To disable this feature, set the `COLLECT_DATA` to `False` in the [data_uploader.py](API/data_uploader.py) script.   
-> If you'd like to contribute to the training data, please contact us to get an API key.
 
 ### UI
 

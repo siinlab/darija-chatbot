@@ -42,6 +42,34 @@ from tqdm import tqdm
 logger.setLevel("DEBUG")
 
 
+def _read_data(dataset_folder: Path, data: list) -> None:
+	if not dataset_folder.is_dir():
+		logger.warning(f"Dataset path is not a folder: {dataset_folder}")
+		return
+
+	audio_dir = dataset_folder / "audios"
+	csv_path = dataset_folder / "data.csv"
+
+	if not audio_dir.exists() or not csv_path.exists():
+		logger.warning(f"audios and/or csv paths don't exist: {dataset_folder}")
+		return
+
+	try:
+		dataframe = pd.read_csv(csv_path)
+	except pd.errors.ParserError:
+		logger.warning(f"Failed to load {csv_path}. Trying with ';' separator.")
+		dataframe = pd.read_csv(csv_path, sep=";")
+
+	for _, row in dataframe.iterrows():
+		try:
+			audio_path = audio_dir / row["audio"]
+		except Exception as e:  # noqa: BLE001
+			logger.warning(f"Failed to load audio file: {e}")
+			continue
+		if audio_path.exists():
+			data.append({"audio": audio_path, "caption": row["caption"]})
+
+
 def _load_datasets(root_dir: Path) -> list[dict[str, str]]:
 	"""Loads all datasets into memory without saving to disk.
 
@@ -55,29 +83,14 @@ def _load_datasets(root_dir: Path) -> list[dict[str, str]]:
 	data = []
 
 	for dataset_folder in tqdm(root_path.iterdir(), desc="Loading datasets"):
-		if not dataset_folder.is_dir():
-			continue
+		_read_data(dataset_folder, data)
 
-		audio_dir = dataset_folder / "audios"
-		csv_path = dataset_folder / "data.csv"
-
-		if not audio_dir.exists() or not csv_path.exists():
-			continue  # Skip invalid datasets
-
-		try:
-			dataframe = pd.read_csv(csv_path)
-		except pd.errors.ParserError:
-			logger.warning(f"Failed to load {csv_path}. Trying with ';' separator.")
-			dataframe = pd.read_csv(csv_path, sep=";")
-
-		for _, row in dataframe.iterrows():
-			try:
-				audio_path = audio_dir / row["audio"]
-			except Exception as e:  # noqa: BLE001
-				logger.warning(f"Failed to load audio file: {e}")
-				continue
-			if audio_path.exists():
-				data.append({"audio": audio_path, "caption": row["caption"]})
+	# if data is empty, then assume that the root directory is the dataset folder
+	if len(data) == 0:
+		logger.warning(
+			"No datasets found in subfolders. Attempting root directory as dataset.",
+		)
+		_read_data(root_path, data)
 
 	logger.info(f"Loaded {len(data)} audio files from all datasets.")
 	return data

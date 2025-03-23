@@ -33,5 +33,5 @@ python speedup_audio.py "$datasets_dir" "$spedup_audios_dataset_dir" \
 # Concat audio files
 python concat_audios.py "$datasets_dir" "$concat_audios_dataset_dir" \
     --max_num_audios_to_merge 4 \
-    --silence_duration 200 \
+    --silence_duration 100 \
     --num_augmented_samples 10000

@@ -20,3 +20,4 @@ streamlit
 statsmodels
 anthropic
 sentence-transformers
+polars

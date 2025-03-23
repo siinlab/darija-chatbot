@@ -14,6 +14,7 @@ if [ ! -d "$1" ]; then
 fi
 
 datasets_folder=$(realpath "$1")
+mkdir -p "$2"
 runs_folder=$(realpath "$2")
 
 # change working directory to the project root directory

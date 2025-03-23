@@ -18,8 +18,11 @@ datasets_dir=$(realpath "$1")
 # change working directory to the project root directory
 cd "$(dirname "$0")/.."
 root_dir=$(pwd)
-concat_audios_dataset_dir="$datasets_dir/concat_audios"
+concat_all_audios_dataset_dir="$datasets_dir/concat_all_audios"
 spedup_audios_dataset_dir="$datasets_dir/spedup_audios"
+
+concat_yt_audios_dataset_dir="$datasets_dir/concat_yt_audios"
+yt_audios_dataset_dir="$datasets_dir/random-2"
 
 # change working directory to the data/ directory
 cd "$root_dir/data/augment"
@@ -31,7 +34,13 @@ python speedup_audio.py "$datasets_dir" "$spedup_audios_dataset_dir" \
     --num_augmented_samples 5000
 
 # Concat audio files
-python concat_audios.py "$datasets_dir" "$concat_audios_dataset_dir" \
+python concat_audios.py "$datasets_dir" "$concat_all_audios_dataset_dir" \
+    --max_num_audios_to_merge 4 \
+    --silence_duration 100 \
+    --num_augmented_samples 10000
+
+# Concat audio files from YouTube
+python concat_audios.py "$yt_audios_dataset_dir" "$concat_yt_audios_dataset_dir" \
     --max_num_audios_to_merge 4 \
     --silence_duration 100 \
     --num_augmented_samples 10000

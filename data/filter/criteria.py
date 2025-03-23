@@ -9,7 +9,6 @@ CRITERIA = {
 		"max": 29,
 	},
 	"length": {  # characters
-		"min": 2,
 		"max": 1000,
 	},
 	"snr": {  # decibels

@@ -25,8 +25,5 @@ folders=$(echo "$folders" | tr '\n' ' ')
 # shellcheck disable=SC2086
 python "$tools_dir/merge-datasets.py" --datasets $folders --output "$all_datasets_dir"
 
-# Convert mp3 files to wav
-bash "$tools_dir/mp3-to-wav.sh" "$all_datasets_dir"
-
 # Build HF dataset
 python "$src_dir/build-dataset.py" --data-dir "$all_datasets_dir" --output-path "$hf_dataset_path"

@@ -36,8 +36,8 @@ disable_caching()
 
 # Define a constant for the maximum label length
 MAX_LABEL_LENGTH = 448
-BATCH_SIZE = 16  # Adjust based on memory availability
-NUM_CORES = 16  # Adjust based on CPU availability
+BATCH_SIZE = 24  # Adjust based on memory availability
+NUM_CORES = 20  # Adjust based on CPU availability
 
 # Load Whisper tokenizer and feature extractor
 tokenizer = WhisperTokenizerFast.from_pretrained(
@@ -87,7 +87,7 @@ def load_audio_data(csv_path: Path, audios_dir: Path) -> Dataset:
 	return dataset.map(process_example, remove_columns=["caption"], num_proc=NUM_CORES)
 
 
-def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
+def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any] | None:
 	"""Processes dataset in batches to optimize speed."""
 	audio_arrays = [sample["array"] for sample in batch["audio"]]
 	sampling_rates = [sample["sampling_rate"] for sample in batch["audio"]]
@@ -106,25 +106,37 @@ def prepare_dataset(batch: dict[str, Any]) -> dict[str, Any]:
 		return_tensors=None,  # Avoid converting to tensor (keeps list of lists)
 	)["input_ids"]
 
-	return batch
+	# Filter out samples with long labels directly in the map function
+	batch = {
+		key: [
+			val[i]
+			for i in range(len(batch["labels"]))
+			if len(batch["labels"][i]) <= MAX_LABEL_LENGTH
+		]
+		for key, val in batch.items()
+	}
+
+	return (
+		batch if batch["labels"] else None
+	)  # Return None if all elements were filtered
 
 
 # Load dataset
 logger.info(f"Loading audio data from {csv_files[0]} and {audios_dir}")
 dataset = load_audio_data(csv_path=csv_files[0], audios_dir=audios_dir)
 
-# Process dataset using batch processing and multiprocessing
-dataset = dataset.map(prepare_dataset, batched=True, batch_size=BATCH_SIZE, num_proc=16)
+logger.info(f"Dataset overview before mapping:\n{dataset}")
 
-# Filter out samples with long labels in batches
-dataset = dataset.filter(
-	lambda x: len(x["labels"]) <= MAX_LABEL_LENGTH,
+# Process dataset using batch processing and multiprocessing
+dataset = dataset.map(
+	prepare_dataset,
+	batched=True,
+	batch_size=BATCH_SIZE,
 	num_proc=NUM_CORES,
-	batched=False,
 )
 
 # Print dataset overview
-logger.info(f"Dataset overview:\n{dataset}")
+logger.info(f"Dataset overview after mapping:\n{dataset}")
 
 # Save dataset to output path
 logger.info(f"Saving dataset to {output_path}")

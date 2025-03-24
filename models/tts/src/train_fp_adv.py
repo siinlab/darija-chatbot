@@ -2,7 +2,6 @@ import argparse  # noqa: D100
 import os
 
 import matplotlib.pyplot as plt
-import sounddevice as sd
 import torch
 from text import tokenizer_raw
 from torch.utils.data import DataLoader
@@ -303,8 +302,6 @@ plt.imshow(mel_out[0].cpu(), aspect="auto", origin="lower")
 
 plt.plot(wave[0].cpu())
 
-sd.play(wave[0].cpu(), 22050)
-
 
 phrase = "أَتَاحَتْ لِلبَائِعِ المُتَجَوِّلِ أنْ يَكُونَ جَاذِباً لِلمُوَاطِنِ الأقَلِّ دَخْلاً"
 
@@ -323,5 +320,3 @@ with torch.inference_mode():
 	wave_ = denoiser(wave, 0.003)
 	wave_ /= wave_.abs().max()
 
-
-sd.play(0.5 * wave_[0].cpu(), 22050)

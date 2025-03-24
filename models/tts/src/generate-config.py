@@ -20,6 +20,7 @@ def generate_yaml(  # noqa: PLR0913
 	restore_model: str,
 	f0_mean: float = 0.0,
 	f0_std: float = 1.0,
+	num_workers: int = 8,
 ) -> None:
 	"""Generate a YAML configuration file with the given parameters.
 
@@ -33,6 +34,7 @@ def generate_yaml(  # noqa: PLR0913
 		restore_model (str): Path to the model to finetune.
 		f0_mean (float): Mean of the F0 values.
 		f0_std (float): Standard deviation of the F0 values.
+		num_workers (int): Number of workers for the DataLoader.
 
 	Returns:
 		None
@@ -67,6 +69,7 @@ def generate_yaml(  # noqa: PLR0913
 		"n_save_states_iter": n_save_states_iter,
 		"n_save_backup_iter": n_save_backup_iter,
 		"epochs": epochs,
+		"num_workers": num_workers,
 	}
 	with Path(file_path).open("w") as file:
 		yaml.dump(data, file, sort_keys=False)
@@ -130,6 +133,12 @@ if __name__ == "__main__":
 		required=True,
 		help="Standard deviation of the F0 values",
 	)
+	parser.add_argument(
+		"--num_workers",
+		type=int,
+		default=8,
+		help="Number of workers for the DataLoader",
+	)
 
 	args = parser.parse_args()
 
@@ -141,6 +150,7 @@ if __name__ == "__main__":
 		train_data_path=args.train_data_path,
 		checkpoint_dir=args.checkpoint_dir,
 		restore_model=args.restore_model,
+		num_workers=args.num_workers,
 		f0_mean=args.f0_mean,
 		f0_std=args.f0_std,
 	)

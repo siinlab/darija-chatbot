@@ -6,8 +6,8 @@ cd "$(dirname "$0")"
 
 src_dir=$(pwd)
 repo_dir="$src_dir/../tts-arabic-pytorch"
-datasets_dir="$src_dir/../../../dataset"
-all_datasets_dir="$src_dir/../../../dataset/all-datasets"
+datasets_dir="$src_dir/../../../datasets/whisper-dataset"
+all_datasets_dir="$src_dir/../../../datasets/tts-all-datasets"
 tools_dir="$src_dir/../../../tools/dataset"
 
 # Delete all-datasets directory if exists

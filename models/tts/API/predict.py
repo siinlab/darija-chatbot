@@ -34,7 +34,7 @@ use_cuda = torch.cuda.is_available()
 # Define where the model is stored for each speaker
 speaker_models = {
 	Speaker.MALE: _here.parent / "checkpoints-male" / "states_6000.pth",
-	Speaker.FEMALE: _here.parent / "checkpoints-female" / "states_6000.pth",
+	Speaker.FEMALE: _here.parent / "checkpoints-female" / "states.pth",
 	Speaker.RANDOM: _here.parent / "checkpoints" / "states.pth",
 }
 

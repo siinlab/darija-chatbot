@@ -11,9 +11,8 @@ cd ../datasets
 dvc_files=$(find . -type f -name "*.dvc")
 
 # Pull the artifacts from the storage
-for dvc_file in $dvc_files; do
-    dvc pull "$dvc_file"
-done
+# shellcheck disable=SC2086
+dvc pull $dvc_files
 
 # uncompress the downloaded files
 bash untar-dataset-archives.sh

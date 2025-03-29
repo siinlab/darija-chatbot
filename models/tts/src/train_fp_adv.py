@@ -2,7 +2,6 @@ import argparse  # noqa: D100
 import os
 
 import matplotlib.pyplot as plt
-import sounddevice as sd
 import torch
 from text import tokenizer_raw
 from torch.utils.data import DataLoader
@@ -73,6 +72,8 @@ train_loader = DataLoader(
 	shuffle=shuffle,
 	drop_last=drop_last,
 	sampler=sampler,
+	num_workers=config.num_workers,
+	pin_memory=True,
 )
 
 (
@@ -226,10 +227,11 @@ for epoch in range(n_epoch, config.epochs):
 		optimizer.step()
 
 		# LOGGING
-		meta["loss_d"] = loss_d.clone().detach()
-		meta["score"] = loss_score.clone().detach()
-		meta["fmatch"] = loss_fmatch.clone().detach()
-		meta["kl_loss"] = binarization_loss.clone().detach()
+		meta["loss_d"] = loss_d.detach()
+		meta["score"] = loss_score.detach()
+		meta["fmatch"] = loss_fmatch.detach()
+		meta["kl_loss"] = binarization_loss.detach()
+
 
 		print(f"loss: {meta['loss'].item()} gnorm: {grad_norm}")  # noqa: T201
 
@@ -288,7 +290,6 @@ ax1.imshow(
 ax2.imshow(y[0][idx, :, : y[2][idx]].detach().cpu(), aspect="auto", origin="lower")
 
 
-model.eval()
 vocoder = load_hifigan(config.vocoder_state_path, config.vocoder_config_path)
 vocoder = vocoder.cuda()
 denoiser = Denoiser(vocoder)
@@ -302,8 +303,6 @@ with torch.inference_mode():
 plt.imshow(mel_out[0].cpu(), aspect="auto", origin="lower")
 
 plt.plot(wave[0].cpu())
-
-sd.play(wave[0].cpu(), 22050)
 
 
 phrase = "أَتَاحَتْ لِلبَائِعِ المُتَجَوِّلِ أنْ يَكُونَ جَاذِباً لِلمُوَاطِنِ الأقَلِّ دَخْلاً"
@@ -322,6 +321,3 @@ with torch.inference_mode():
 	wave = vocoder(mel_out[0])
 	wave_ = denoiser(wave, 0.003)
 	wave_ /= wave_.abs().max()
-
-
-sd.play(0.5 * wave_[0].cpu(), 22050)

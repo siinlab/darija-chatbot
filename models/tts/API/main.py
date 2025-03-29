@@ -4,21 +4,20 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from .predict import Voice, generate_wav
+from .predict import Speaker, generate_wav
 
 router = APIRouter()
 
 
 class GenerateRequest(BaseModel):  # noqa: D101
 	text: str
-	voice: Voice
-	checkpoint: str = "states_6000"
+	speaker: Speaker
 
 
 @router.post("/generate")
 def generate_speech(request: GenerateRequest):  # noqa: ANN201, D103
 	try:
-		wav_path = generate_wav(request.text, request.voice, request.checkpoint)
+		wav_path = generate_wav(request.text, request.speaker)
 		return FileResponse(
 			wav_path,
 			media_type="audio/wav",

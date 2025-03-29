@@ -12,27 +12,34 @@ append_to_sys_path()
 
 from models.fastpitch import FastPitch2Wave  # noqa: E402
 
-# Define paths
-_here = Path(__file__).resolve().parent
-female_checkpoints_dir = _here.parent / "checkpoints-female"
-male_checkpoints_dir = _here.parent / "checkpoints-male"
 
-# check if there's a cuda device
-use_cuda = torch.cuda.is_available()
-
-# cache models
-models = {}
-
-
-class Voice(str, Enum):  # noqa: D101
+class Speaker(str, Enum):  # noqa: D101
 	MALE = "Male"
 	FEMALE = "Female"
+	RANDOM = "Random"
 
 	def __str__(self) -> str:  # noqa: D105
 		return self.value
 
 	def __repr__(self) -> str:  # noqa: D105
 		return self.value
+
+
+# Define paths
+_here = Path(__file__).resolve().parent
+
+# check if there's a cuda device
+use_cuda = torch.cuda.is_available()
+
+# Define where the model is stored for each speaker
+speaker_models = {
+	Speaker.MALE: _here.parent / "checkpoints-male" / "states_6000.pth",
+	Speaker.FEMALE: _here.parent / "checkpoints-female" / "states_6000.pth",
+	Speaker.RANDOM: _here.parent / "checkpoints" / "states.pth",
+}
+
+# cache models
+models_cache = {}
 
 
 def generate_path() -> Path:
@@ -47,32 +54,28 @@ def generate_path() -> Path:
 	return (Path(out_dir) / name).as_posix()
 
 
-def generate_wav(text: str, voice: Voice, checkpoint: str = "states_6000") -> str:
-	"""Generate a wav file from the given text using the specified voice and checkpoint.
+def generate_wav(text: str, speaker: Speaker) -> str:
+	"""Generate a wav file from the given text using the specified speaker.
 
 	Args:
 		text (str): The text to convert to speech.
-		voice (Voice): The voice to use for the speech synthesis.
-		checkpoint (str): The checkpoint to use for the model.
+		speaker (Speaker): The speaker to use.
 
 	Returns:
 		str: The path to the generated wav file.
 	"""
-	model_name = f"{voice}_{checkpoint}"
-	if model_name not in models:
-		if voice == Voice.MALE:
-			ckpt_path = male_checkpoints_dir / f"{checkpoint}.pth"
-		elif voice == Voice.FEMALE:
-			ckpt_path = female_checkpoints_dir / f"{checkpoint}.pth"
+	if speaker not in models_cache:
+		if speaker in speaker_models:
+			ckpt_path = speaker_models[speaker]
 		else:
 			msg = "Unknown voice"
 			raise ValueError(msg)
 		model = FastPitch2Wave(ckpt_path)
 		if use_cuda:
 			model = model.cuda()
-		models[model_name] = model
+		models_cache[speaker] = model
 	else:
-		model = models[model_name]
+		model = models_cache[speaker]
 	# Split the text into parts based on delimeters
 	texts, silence_durations = split_text(text)
 	# Generate the wav file

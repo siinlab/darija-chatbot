@@ -15,11 +15,6 @@ from tqdm import tqdm
 parser = argparse.ArgumentParser(description="Split audio files into smaller chunks")
 parser.add_argument("audio_file", type=Path, help="The path to the audio file to split")
 parser.add_argument(
-	"model_checkpoint",
-	type=Path,
-	help="The path to the Whisper model checkpoint",
-)
-parser.add_argument(
 	"output_dir",
 	type=Path,
 	help="The directory to save the split audio files",
@@ -27,24 +22,18 @@ parser.add_argument(
 parser.add_argument(
 	"--min_silence_duration",
 	type=int,
-	default=10,
+	default=200,
 	help="The minimum duration of silence in milliseconds to split the audio",
 )
 
 args = parser.parse_args()
 audio_file = args.audio_file
-model_checkpoint = args.model_checkpoint
 output_dir = args.output_dir
 min_silence_duration = args.min_silence_duration
 
 # check that the audio file exists
 if not audio_file.exists():
 	logger.error(f"Audio file {audio_file} does not exist")
-	sys.exit(1)
-
-# check that the model checkpoint exists
-if not model_checkpoint.exists():
-	logger.error(f"Model checkpoint {model_checkpoint} does not exist")
 	sys.exit(1)
 
 # if the output directory does not exist, create it
@@ -62,7 +51,7 @@ if not torch.cuda.is_available():
 # Load audio file
 audio = whisper.load_audio(audio_file.as_posix())
 # Load the model
-model = whisper.load_model(model_checkpoint.as_posix(), device="cuda:0")
+model = whisper.load_model("openai/whisper-large-v3", device="cuda:0")
 # Split the audio file into chunks
 result = whisper.transcribe(model, audio, language="ar")
 
@@ -147,7 +136,7 @@ def _save_audio_segment(start: float, end: float, index: int) -> None:
 	start_sample = int(start / (10**3) * sample_rate)
 	end_sample = int(end / (10**3) * sample_rate)
 	segment = waveform[:, start_sample:end_sample]
-	segment_path = output_dir / "audios" / (f"segment_{index}" + audio_file.suffix)
+	segment_path = output_dir / "audios" / (f"segment_{index:04d}" + audio_file.suffix)
 	torchaudio.save(segment_path.as_posix(), segment, sample_rate)
 
 
@@ -158,7 +147,7 @@ audio_dir.mkdir(exist_ok=True)
 start = starts[0]
 # save the audio segments
 for index in tqdm(silent_parts, desc="Saving audio segments"):
-	_save_audio_segment(start, ends[index], index)
+	_save_audio_segment(start, ends[index] + min(100, min_silence_duration // 2), index)
 	start = starts[index + 1]
 
 logger.info(f"Split audio files saved to {output_dir}")

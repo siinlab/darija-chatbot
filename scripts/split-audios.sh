@@ -20,6 +20,6 @@ if ! command -v parallel &> /dev/null; then
 fi
 
 # Run parallel processing
-find "$audios_dir" -maxdepth 1 -type f -name "*.mp3" | parallel -j $N_PARALLEL python "$script_dir/whisper_based.py" {} "$output_dir/{/.}" --min_silence_duration 200
+find "$audios_dir" -maxdepth 1 -type f -name "*.mp3" | parallel --line-buffer -j $N_PARALLEL python "$script_dir/whisper_based.py" {} "$output_dir/{/.}" --min_silence_duration 200
 
 echo "✅ All audio files processed in parallel!"

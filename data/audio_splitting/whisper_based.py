@@ -39,7 +39,7 @@ if not audio_file.exists():
 # if the output directory does not exist, create it
 if output_dir.exists():
 	logger.warning(f"Output directory {output_dir} already exists")
-	sys.exit(1)
+	sys.exit(0)
 
 output_dir.mkdir(parents=True)
 

@@ -38,7 +38,7 @@ if not audio_file.exists():
 
 # if the output directory does not exist, create it
 if output_dir.exists():
-	logger.error(f"Output directory {output_dir} already exists")
+	logger.warning(f"Output directory {output_dir} already exists")
 	sys.exit(1)
 
 output_dir.mkdir(parents=True)
@@ -53,7 +53,12 @@ audio = whisper.load_audio(audio_file.as_posix())
 # Load the model
 model = whisper.load_model("openai/whisper-large-v3", device="cuda:0")
 # Split the audio file into chunks
-result = whisper.transcribe(model, audio, language="ar")
+try:
+	result = whisper.transcribe(model, audio, language="ar")
+except Exception as e:  # noqa: BLE001
+	logger.error(f"Error occurred while inferring timestamps: {e}")
+	output_dir.rmdir()
+	sys.exit(1)
 
 # Extract words from the segments
 words = []

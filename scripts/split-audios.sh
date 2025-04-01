@@ -1,7 +1,9 @@
 #!/bin/bash
 set -e
 
-# read audios folder from the user
+N_PARALLEL=2
+
+# Read audios folder from the user
 audios_dir=$(realpath "$1")
 output_dir=$(realpath "$2")
 
@@ -11,13 +13,13 @@ cd ..
 
 script_dir="$(pwd)/data/audio_splitting"
 
-# Iterate over all the audio files in the audios directory
-for audio_file in "$audios_dir"/*.mp3; do
-    echo "========== Processing: $audio_file =========="
-    # Get the filename without the extension
-    filename=$(basename -- "$audio_file")
-    filename="${filename%.*}"
+# Ensure GNU Parallel is installed
+if ! command -v parallel &> /dev/null; then
+    echo "Error: GNU Parallel is not installed. Install it using: sudo apt-get install parallel"
+    exit 1
+fi
 
-    # Split the audio file into 5-second chunks
-    python "$script_dir/whisper_based.py" "$audio_file" "$output_dir/$filename" --min_silence_duration 200
-done
+# Run parallel processing
+find "$audios_dir" -maxdepth 1 -type f -name "*.mp3" | parallel -j $N_PARALLEL python "$script_dir/whisper_based.py" {} "$output_dir/{/.}" --min_silence_duration 200
+
+echo "✅ All audio files processed in parallel!"

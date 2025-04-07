@@ -21,3 +21,6 @@ statsmodels
 anthropic
 sentence-transformers
 polars
+whisper_timestamped
+deepfilternet
+speechbrain

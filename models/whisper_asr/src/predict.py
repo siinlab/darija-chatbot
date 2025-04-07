@@ -12,6 +12,7 @@ import librosa
 import pandas as pd
 import psutil
 from lgg import logger
+from tqdm import tqdm
 from transformers import pipeline
 
 # suppress FutureWarning
@@ -143,11 +144,19 @@ logger.info(f"Using {len(audio_paths)} audio files for prediction")
 audio_paths = sorted(audio_paths)
 
 # Evaluate the model on the audio files
-result = model(
-	[audio_path.as_posix() for audio_path in audio_paths],
-	batch_size=batch_size,
-	num_workers=num_cores,
-)
+result = []
+for i in tqdm(range(0, len(audio_paths), batch_size)):
+	try:
+		batch_audio_paths = audio_paths[i : i + batch_size]
+		batch_result = model(
+			[audio_path.as_posix() for audio_path in batch_audio_paths],
+			batch_size=len(batch_audio_paths),
+			num_workers=num_cores,
+		)
+		result.extend(batch_result)
+	except Exception as e:  # noqa: BLE001, PERF203
+		result.extend([{"text": ""} for _ in batch_audio_paths])
+		logger.warning(f"Error occurred while processing {batch_audio_paths}: {e}")
 
 # pretty print the results
 for i, res in enumerate(result):

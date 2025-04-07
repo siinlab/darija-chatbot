@@ -113,11 +113,11 @@ def split_text(text: str) -> tuple[list[str], list[int]]:
 			and a list of silence durations in ms.
 	"""
 	delimeters = {
-		".": 200,
-		"،": 100,
-		"?": 200,
-		"؟": 200,
-		"!": 200,
+		".": 100,
+		"،": 30,
+		"?": 100,
+		"؟": 100,
+		"!": 100,
 		"\n": 200,
 	}
 	# Remove redundant spaces

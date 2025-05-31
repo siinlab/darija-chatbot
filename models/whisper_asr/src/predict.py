@@ -158,7 +158,7 @@ def _process_batch(batch_audio_paths) -> list:  # noqa: ANN001
 
 
 # Process the chunks in parallel
-results = Parallel(n_jobs=2, backend="threading")(
+results = Parallel(n_jobs=8, backend="threading")(
 	delayed(
 		_process_batch,
 	)(audio_paths[i : i + batch_size])
